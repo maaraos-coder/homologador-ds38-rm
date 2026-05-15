@@ -228,10 +228,10 @@ def homologar_por_tabla_sma491(categorias):
         return "Zona IV", "70 dBA", "70 dBA", "Actividad Productiva y/o Infraestructura sin uso Residencial ni Equipamiento."
 
     if "AP" in cats or "Inf" in cats:
-        return "Zona III", "65 dBA", "55 dBA", "Combinación con Actividad Productiva y/o Infraestructura junto a R/Eq/AV/EP."
+        return "Zona III", "65 dBA", "50 dBA", "Combinación con Actividad Productiva y/o Infraestructura junto a R/Eq/AV/EP."
 
     if "Eq" in cats:
-        return "Zona II", "60 dBA", "50 dBA", "Combinación con Equipamiento, sin Actividad Productiva ni Infraestructura."
+        return "Zona II", "60 dBA", "45 dBA", "Combinación con Equipamiento, sin Actividad Productiva ni Infraestructura."
 
     if "R" in cats:
         return "Zona I", "55 dBA", "45 dBA", "Uso Residencial solo o combinado únicamente con Área Verde/Espacio Público."
