@@ -446,6 +446,7 @@ direccion = st.text_input(
 )
 
 if st.button("Buscar dirección y homologar"):
+
     geolocator = Nominatim(
         user_agent="homologador_ds38_rm"
     )
@@ -455,16 +456,37 @@ if st.button("Buscar dirección y homologar"):
     if comuna_info["nombre"].lower() not in direccion.lower():
         consulta = f"{direccion}, {comuna_info['nombre']}, Chile"
 
-    location = geolocator.geocode(consulta)
+    try:
 
-    if location:
-        st.session_state.lat = location.latitude
-        st.session_state.lon = location.longitude
+        with st.spinner("Buscando dirección..."):
 
-        st.success("Dirección encontrada")
+            location = geolocator.geocode(
+                consulta,
+                timeout=10
+            )
 
-    else:
-        st.error("No se encontró la dirección.")
+        if location:
+
+            st.session_state.lat = location.latitude
+            st.session_state.lon = location.longitude
+
+            st.success("Dirección encontrada")
+
+        else:
+
+            st.error(
+                "No se encontró la dirección. "
+                "Prueba agregando numeración, comuna o selecciona el punto manualmente en el mapa."
+            )
+
+    except Exception as e:
+
+        st.warning(
+            "El servicio de búsqueda de direcciones no respondió correctamente. "
+            "Puedes seleccionar el punto directamente en el mapa."
+        )
+
+        st.caption(f"Detalle técnico: {e}")
 
 
 # =========================================================
