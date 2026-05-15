@@ -435,7 +435,7 @@ tolerancia_m = st.selectbox(
 
 
 # =========================================================
-# BUSCADOR
+# BUSCADOR DIRECCIÓN
 # =========================================================
 
 st.subheader("Buscar dirección")
@@ -448,7 +448,8 @@ direccion = st.text_input(
 if st.button("Buscar dirección y homologar"):
 
     geolocator = Nominatim(
-        user_agent="homologador_ds38_rm"
+        user_agent="homologador_ds38_rm",
+        timeout=10
     )
 
     consulta = direccion
@@ -476,18 +477,50 @@ if st.button("Buscar dirección y homologar"):
 
             st.error(
                 "No se encontró la dirección. "
-                "Prueba agregando numeración, comuna o selecciona el punto manualmente en el mapa."
+                "Prueba agregando comuna y país."
             )
 
     except Exception as e:
 
         st.warning(
             "El servicio de búsqueda de direcciones no respondió correctamente. "
-            "Puedes seleccionar el punto directamente en el mapa."
+            "Puedes seleccionar el punto directamente en el mapa "
+            "o ingresar coordenadas manualmente."
         )
 
         st.caption(f"Detalle técnico: {e}")
 
+
+# =========================================================
+# COORDENADAS MANUALES
+# =========================================================
+
+st.subheader("Ingresar coordenadas manualmente")
+
+col_lat, col_lon = st.columns(2)
+
+with col_lat:
+
+    lat_manual = st.number_input(
+        "Latitud",
+        value=-33.45,
+        format="%.8f"
+    )
+
+with col_lon:
+
+    lon_manual = st.number_input(
+        "Longitud",
+        value=-70.66,
+        format="%.8f"
+    )
+
+if st.button("Homologar coordenadas"):
+
+    st.session_state.lat = lat_manual
+    st.session_state.lon = lon_manual
+
+    st.success("Coordenadas cargadas correctamente")
 
 # =========================================================
 # MAPA
