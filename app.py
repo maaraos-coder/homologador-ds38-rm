@@ -12,7 +12,7 @@ from geopy.geocoders import Nominatim
 st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
-st.subheader("Región Metropolitana - Motor PRC + PRMS")
+st.subheader("Región Metropolitana - Motor PRC + PRMS + Límite Urbano")
 
 st.warning(
     "Herramienta de apoyo técnico para homologación preliminar de zonas DS38/11 MMA. "
@@ -21,6 +21,7 @@ st.warning(
 )
 
 ZIP_PATH = "data/IPTMetropolitana.zip"
+NACLU_PATH = "data/02.NACLU.zip"
 
 
 # =========================================================
@@ -67,7 +68,7 @@ def listar_shapefiles():
 def listar_shapefiles_prc():
     shps = listar_shapefiles()
 
-    shp_prc = [
+    return [
         a for a in shps
         if "/PRC/" in a
         and "Patrimonio" not in a
@@ -77,14 +78,12 @@ def listar_shapefiles_prc():
         and "_R_" not in a
     ]
 
-    return shp_prc
-
 
 @st.cache_data
 def listar_shapefiles_prms():
     shps = listar_shapefiles()
 
-    shp_prms = [
+    return [
         a for a in shps
         if "/PRMS/" in a
         and (
@@ -93,8 +92,6 @@ def listar_shapefiles_prms():
             or "Rural" in a
         )
     ]
-
-    return shp_prms
 
 
 # =========================================================
@@ -159,6 +156,33 @@ def cargar_prms():
     return gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
 
 
+@st.cache_data
+def cargar_limite_urbano():
+    capas = []
+
+    rutas = [
+        "02.NAC_LU/PRC_Limite_urbano.shp",
+        "02.NAC_LU/PRI_Limite_urbano.shp"
+    ]
+
+    for shp in rutas:
+        try:
+            ruta = f"zip://{NACLU_PATH}!{shp}"
+            gdf = gpd.read_file(ruta)
+            gdf = gdf.to_crs(epsg=4326)
+            gdf["archivo_origen"] = shp
+            capas.append(gdf)
+        except:
+            pass
+
+    if capas:
+        gdf_total = pd.concat(capas, ignore_index=True)
+        gdf_total = gpd.GeoDataFrame(gdf_total, geometry="geometry", crs="EPSG:4326")
+        return gdf_total
+
+    return gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+
+
 def normalizar_columnas(gdf):
     renombres = {
         "COM": "COMUNA",
@@ -198,6 +222,38 @@ def normalizar_columnas(gdf):
 
 
 # =========================================================
+# DETECCIÓN URBANO / RURAL
+# =========================================================
+
+def detectar_limite_urbano(lat, lon, gdf_lu):
+    if gdf_lu.empty:
+        return "No evaluado", "No se cargó capa de límite urbano."
+
+    punto = gpd.GeoDataFrame(
+        {"id": [1]},
+        geometry=[Point(lon, lat)],
+        crs="EPSG:4326"
+    )
+
+    try:
+        resultado = gpd.sjoin(
+            punto,
+            gdf_lu,
+            how="left",
+            predicate="intersects"
+        )
+
+        if not resultado.empty and not pd.isna(resultado.iloc[0].get("index_right")):
+            fila = resultado.iloc[0]
+            return "Dentro de límite urbano", fila.get("archivo_origen", "")
+
+        return "Fuera de límite urbano / área rural", "No intersecta PRC_Limite_urbano ni PRI_Limite_urbano."
+
+    except Exception as e:
+        return "No evaluado", str(e)
+
+
+# =========================================================
 # HOMOLOGACIÓN SMA 491
 # =========================================================
 
@@ -215,7 +271,6 @@ def detectar_categorias_oguc(fila):
 
     categorias = set()
 
-    # R = Residencial
     if (
         "residencial" in texto_norm
         or "vivienda" in texto_norm
@@ -224,7 +279,6 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("R")
 
-    # Eq = Equipamiento
     if (
         "equipamiento" in texto_norm
         or "comercio" in texto_norm
@@ -244,7 +298,6 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("Eq")
 
-    # AP = Actividad Productiva
     if (
         "actividad productiva" in texto_norm
         or "actividades productivas" in texto_norm
@@ -261,7 +314,6 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("AP")
 
-    # Inf = Infraestructura
     if (
         "infraestructura" in texto_norm
         or "transporte" in texto_norm
@@ -278,7 +330,6 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("Inf")
 
-    # AV = Área Verde
     if (
         "area verde" in texto_norm
         or "areas verdes" in texto_norm
@@ -288,7 +339,6 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("AV")
 
-    # EP = Espacio Público
     if (
         "espacio publico" in texto_norm
         or "espacios publicos" in texto_norm
@@ -397,14 +447,12 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
 
 
 def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
-    # 1. Buscar primero en PRC
     resultado_prc = buscar_punto_en_capa(lat, lon, gdf_prc, tolerancia_m)
 
     if not resultado_prc.empty and not pd.isna(resultado_prc.iloc[0].get("ZONA")):
         resultado_prc["fuente_normativa"] = "PRC"
         return resultado_prc
 
-    # 2. Si no encuentra, buscar en PRMS
     resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
 
     if not resultado_prms.empty:
@@ -418,10 +466,22 @@ def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
 # RESULTADO
 # =========================================================
 
-def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
+def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
+    estado_lu, detalle_lu = detectar_limite_urbano(lat, lon, gdf_lu)
+
     resultado = buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m)
 
     st.subheader("Resultado de homologación")
+
+    st.write("**Clasificación territorial:**", estado_lu)
+    st.write("**Detalle límite urbano:**", detalle_lu)
+
+    if estado_lu == "Fuera de límite urbano / área rural":
+        st.warning(
+            "El punto consultado se encuentra fuera del límite urbano según la capa NACLU. "
+            "La homologación debe revisarse con especial cuidado, considerando PRMS, área rural "
+            "y eventuales restricciones al desarrollo urbano."
+        )
 
     if resultado.empty:
         st.warning("No se encontró homologación para el punto.")
@@ -476,9 +536,17 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
     st.subheader("Criterio de homologación")
     st.write(criterio)
 
-    advertencia = ""
+    advertencia_lu = ""
+    if estado_lu == "Fuera de límite urbano / área rural":
+        advertencia_lu = (
+            " Asimismo, el punto se encuentra fuera del límite urbano según la capa NACLU, "
+            "por lo que la homologación debe entenderse como preliminar y sujeta a revisión "
+            "del PRMS, condición rural y normativa territorial aplicable."
+        )
+
+    advertencia_tol = ""
     if metodo == "Por tolerancia espacial":
-        advertencia = (
+        advertencia_tol = (
             f" Cabe hacer presente que el punto no intersectó directamente el polígono "
             f"de zonificación, por lo que se aplicó una tolerancia espacial de {tolerancia_m} m, "
             f"identificándose el polígono más cercano a {distancia} m."
@@ -487,11 +555,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
     texto = f"""
 Para el punto consultado, se identifica información territorial proveniente de {fuente}, correspondiente a la zona IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}. De acuerdo con los atributos de uso de suelo de la cartografía revisada, se identifican las siguientes categorías para efectos de homologación acústica: {categorias}.
 
-Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia}
+El punto presenta la siguiente clasificación territorial según la capa de límite urbano: {estado_lu}. Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_lu}{advertencia_tol}
 """
 
     st.subheader("Texto técnico preliminar")
-    st.text_area("Redacción", texto.strip(), height=230)
+    st.text_area("Redacción", texto.strip(), height=260)
 
     with st.expander("Ver todos los atributos de la capa"):
         st.write(pd.DataFrame([fila.drop(labels=["geometry"], errors="ignore")]))
@@ -537,8 +605,11 @@ gdf_prms = cargar_prms()
 gdf_prms = normalizar_columnas(gdf_prms)
 gdf_prms["fuente_normativa"] = "PRMS"
 
+gdf_lu = cargar_limite_urbano()
+
 st.success(
-    f"PRC cargado: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | Polígonos PRMS: {len(gdf_prms)}"
+    f"PRC cargado: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | "
+    f"Polígonos PRMS: {len(gdf_prms)} | Límites urbanos: {len(gdf_lu)}"
 )
 
 
@@ -552,6 +623,12 @@ with st.expander("Ver capas disponibles dentro del ZIP"):
 
     st.write("Capas PRMS usadas:")
     st.write(listar_shapefiles_prms())
+
+    st.write("Capas límite urbano usadas:")
+    st.write([
+        "02.NAC_LU/PRC_Limite_urbano.shp",
+        "02.NAC_LU/PRI_Limite_urbano.shp"
+    ])
 
 
 # =========================================================
@@ -670,7 +747,28 @@ m = folium.Map(
     zoom_start=13
 )
 
-# PRMS base, más liviano
+# Límite urbano
+try:
+    gdf_lu_mapa = gdf_lu.copy()
+    gdf_lu_mapa["geometry"] = gdf_lu_mapa.geometry.simplify(
+        0.0004,
+        preserve_topology=True
+    )
+
+    folium.GeoJson(
+        gdf_lu_mapa,
+        name="Límite urbano NACLU",
+        style_function=lambda x: {
+            "fillOpacity": 0.00,
+            "weight": 2,
+            "color": "black"
+        }
+    ).add_to(m)
+
+except:
+    pass
+
+# PRMS base
 try:
     gdf_prms_mapa = gdf_prms.copy()
     gdf_prms_mapa["geometry"] = gdf_prms_mapa.geometry.simplify(
@@ -748,20 +846,7 @@ if st.session_state.lat and st.session_state.lon:
         st.session_state.lon,
         gdf_prc,
         gdf_prms,
+        gdf_lu,
         tolerancia_m
     )
-with st.expander("Ver capas dentro de NACLU"):
-    try:
-        with zipfile.ZipFile("data/02.NACLU.zip", "r") as z:
-            archivos_naclu = z.namelist()
-
-        shps_naclu = [a for a in archivos_naclu if a.endswith(".shp")]
-
-        st.write(shps_naclu)
-
-    except Exception as e:
-        st.error("No pude leer 02.NACLU.zip")
-        st.write(e)
-
-
 
