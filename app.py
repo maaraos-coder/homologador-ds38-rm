@@ -1148,42 +1148,69 @@ except:
 
 # PRMS_USO_Suelo
 try:
-    gdf_prms_uso_mapa = gdf_prms_uso.copy()
-    gdf_prms_uso_mapa["geometry"] = gdf_prms_uso_mapa.geometry.simplify(
-        0.0008,
-        preserve_topology=True
-    )
 
-    folium.GeoJson(
-        gdf_prms_uso_mapa,
-        name="PRMS_USO_Suelo",
-        style_function=lambda x: {
-            "fillOpacity": 0.10,
-            "weight": 1
-        },
-        tooltip=folium.GeoJsonTooltip(
-            fields=["NOMBRE", "UPERM"],
-            aliases=["Nombre PRMS", "Uso permitido"]
+    gdf_prms_uso_mapa = gdf_prms_uso.copy()
+
+    if not gdf_prms_uso_mapa.empty:
+
+        gdf_prms_uso_mapa["geometry"] = gdf_prms_uso_mapa.geometry.simplify(
+            0.0008,
+            preserve_topology=True
         )
-    ).add_to(m)
+
+        folium.GeoJson(
+            gdf_prms_uso_mapa,
+            name="PRMS_USO_Suelo",
+            style_function=lambda x: {
+                "fillOpacity": 0.10,
+                "weight": 1
+            },
+            tooltip=folium.GeoJsonTooltip(
+                fields=[
+                    col for col in ["NOMBRE", "UPERM"]
+                    if col in gdf_prms_uso_mapa.columns
+                ],
+                aliases=[
+                    alias for col, alias in zip(
+                        ["NOMBRE", "UPERM"],
+                        ["Nombre PRMS", "Uso permitido"]
+                    )
+                    if col in gdf_prms_uso_mapa.columns
+                ]
+            )
+        ).add_to(m)
+
 except:
     pass
 
 # PRC comuna seleccionada
-gdf_prc_mapa = gdf_prc.copy()
-gdf_prc_mapa["geometry"] = gdf_prc_mapa.geometry.simplify(
-    0.0003,
-    preserve_topology=True
-)
 
-folium.GeoJson(
-    gdf_prc_mapa,
-    name=f"PRC {comuna_info['nombre']}",
-    tooltip=folium.GeoJsonTooltip(
-        fields=["COMUNA", "ZONA", "NOMBRE"],
-        aliases=["Comuna", "Zona", "Nombre"]
+if not gdf_prc.empty:
+
+    gdf_prc_mapa = gdf_prc.copy()
+
+    gdf_prc_mapa["geometry"] = gdf_prc_mapa.geometry.simplify(
+        0.0003,
+        preserve_topology=True
     )
-).add_to(m)
+
+    folium.GeoJson(
+        gdf_prc_mapa,
+        name=f"PRC {comuna_info['nombre']}",
+        tooltip=folium.GeoJsonTooltip(
+            fields=[
+                col for col in ["COMUNA", "ZONA", "NOMBRE"]
+                if col in gdf_prc_mapa.columns
+            ],
+            aliases=[
+                alias for col, alias in zip(
+                    ["COMUNA", "ZONA", "NOMBRE"],
+                    ["Comuna", "Zona", "Nombre"]
+                )
+                if col in gdf_prc_mapa.columns
+            ]
+        )
+    ).add_to(m)
 
 if st.session_state.lat and st.session_state.lon:
     folium.Marker(
