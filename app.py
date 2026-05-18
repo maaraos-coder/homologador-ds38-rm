@@ -9,10 +9,18 @@ from streamlit_folium import st_folium
 from shapely.geometry import Point
 from geopy.geocoders import Nominatim
 
-st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
+
+# =========================================================
+# CONFIGURACIÓN GENERAL
+# =========================================================
+
+st.set_page_config(
+    page_title="Homologador DS38 RM",
+    layout="wide"
+)
 
 st.title("Homologador DS38/11 MMA")
-st.subheader("Región Metropolitana - Motor PRC + PRMS optimizado por comuna")
+st.subheader("Región Metropolitana - Motor PRC + PRMS + Tabla Normativa")
 
 if st.button("Limpiar caché"):
     st.cache_data.clear()
@@ -22,10 +30,11 @@ if st.button("Limpiar caché"):
 st.warning(
     "Herramienta de apoyo técnico para homologación preliminar de zonas DS38/11 MMA. "
     "El resultado debe ser verificado con el Instrumento de Planificación Territorial vigente, "
-    "la cartografía oficial y la Res. Ex. SMA N°491/2016 antes de su uso formal."
+    "la cartografía oficial, la Ordenanza correspondiente y la Res. Ex. SMA N°491/2016 antes de su uso formal."
 )
 
 ZIP_PATH = "data/IPTMetropolitana.zip"
+TABLA_HOMOLOGACION_PATH = "rules/homologacion_prc.csv"
 
 
 # =========================================================
@@ -39,6 +48,7 @@ def normalizar(texto):
     texto = texto.replace("ñ", "n")
     texto = texto.replace("_", " ")
     texto = texto.replace("-", " ")
+    texto = " ".join(texto.split())
     return texto.strip()
 
 
@@ -50,7 +60,7 @@ def texto_atributos(fila):
             continue
         try:
             valores.append(str(fila.get(col, "")))
-        except:
+        except Exception:
             pass
 
     return normalizar(" ".join(valores))
@@ -72,11 +82,37 @@ def tiene_info_normativa(fila):
 
     return False
 
+
+def crear_gdf_vacio():
+    return gpd.GeoDataFrame(
+        {
+            "COMUNA": [],
+            "ZONA": [],
+            "NOMBRE": [],
+            "UPERM": [],
+            "UPREF": [],
+            "UPROH": [],
+            "SUELO": [],
+            "DECRETO": [],
+            "PLANO": [],
+            "fuente_normativa": [],
+            "archivo_origen": [],
+            "observacion_jerarquia": []
+        },
+        geometry=[],
+        crs="EPSG:4326"
+    )
+
+
+# =========================================================
+# TABLA MAESTRA DE HOMOLOGACIÓN
+# =========================================================
+
 @st.cache_data
 def cargar_tabla_homologacion():
     try:
-        return pd.read_csv("rules/homologacion_prc.csv")
-    except:
+        return pd.read_csv(TABLA_HOMOLOGACION_PATH)
+    except Exception:
         return pd.DataFrame()
 
 
@@ -86,11 +122,12 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     if tabla.empty:
         return None
 
+    tabla = tabla.copy()
+
     comuna_norm = normalizar(comuna)
     zona_norm = normalizar(zona_prc)
     nombre_norm = normalizar(nombre_zona)
 
-    tabla = tabla.copy()
     tabla["comuna_norm"] = tabla["comuna"].apply(normalizar)
     tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar)
     tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
@@ -108,6 +145,7 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
         return None
 
     return match.iloc[0].to_dict()
+
 
 # =========================================================
 # LISTAR CAPAS
@@ -130,7 +168,7 @@ def listar_shapefiles_prc():
         if "/PRC/" in a
         and "Patrimonio" not in a
         and "ZNE" not in a
-        and "poligono" not in a
+        and "poligono" not in a.lower()
         and "_R." not in a
         and "_R_" not in a
     ]
@@ -185,21 +223,16 @@ def buscar_capa_prms_uso_suelo():
 
 
 # =========================================================
-# ÍNDICE COMUNAS
+# ÍNDICE DE COMUNAS
 # =========================================================
 
 @st.cache_data
 def crear_indice_comunas():
-
     indice = {}
 
     for shp in listar_shapefiles():
 
         nombre_archivo = shp.split("/")[-1]
-
-        # =====================================================
-        # FILTRAR SOLO CAPAS TERRITORIALES
-        # =====================================================
 
         if not shp.endswith(".shp"):
             continue
@@ -213,20 +246,12 @@ def crear_indice_comunas():
         if "poligono" in shp.lower():
             continue
 
-        # =====================================================
-        # PRI / PRC / PNSECC
-        # =====================================================
-
         if (
             "/PRC/" not in shp
             and "/PRI/" not in shp
             and "PNSECC" not in shp
         ):
             continue
-
-        # =====================================================
-        # LIMPIEZA NOMBRE
-        # =====================================================
 
         comuna = nombre_archivo
 
@@ -243,10 +268,6 @@ def crear_indice_comunas():
         comuna = comuna.replace("_", " ")
         comuna = comuna.strip()
 
-        # =====================================================
-        # NORMALIZACIONES ESPECIALES
-        # =====================================================
-
         especiales = {
             "Nunoa AP": "Ñuñoa",
             "Pudahuel San Francisco": "Pudahuel"
@@ -254,10 +275,6 @@ def crear_indice_comunas():
 
         if comuna in especiales:
             comuna = especiales[comuna]
-
-        # =====================================================
-        # ELIMINAR SUFIJOS EXTRAÑOS
-        # =====================================================
 
         basura = [
             " AP",
@@ -269,26 +286,13 @@ def crear_indice_comunas():
             if comuna.endswith(b):
                 comuna = comuna.replace(b, "").strip()
 
-        # =====================================================
-        # CREAR CLAVE
-        # =====================================================
-
         clave = normalizar(comuna)
 
-        # =====================================================
-        # EVITAR DUPLICADOS
-        # =====================================================
-
         if clave not in indice:
-
             indice[clave] = {
                 "nombre": comuna,
                 "archivo": shp
             }
-
-    # =========================================================
-    # AGREGAR COMUNAS FALTANTES MANUALMENTE
-    # =========================================================
 
     faltantes = {
         "alhue": "Alhué",
@@ -303,9 +307,7 @@ def crear_indice_comunas():
     }
 
     for clave, nombre in faltantes.items():
-
         if clave not in indice:
-
             indice[clave] = {
                 "nombre": nombre,
                 "archivo": None
@@ -315,11 +317,14 @@ def crear_indice_comunas():
 
 
 # =========================================================
-# CARGA CAPAS
+# CARGA Y NORMALIZACIÓN DE CAPAS
 # =========================================================
 
 @st.cache_data
 def cargar_shp(shp):
+    if not shp:
+        return crear_gdf_vacio()
+
     ruta = f"zip://{ZIP_PATH}!{shp}"
 
     gdf = gpd.read_file(ruta)
@@ -330,6 +335,9 @@ def cargar_shp(shp):
 
 
 def normalizar_columnas(gdf):
+    if gdf.empty:
+        return crear_gdf_vacio()
+
     renombres = {
         "COM": "COMUNA",
         "NOM": "NOMBRE",
@@ -371,6 +379,22 @@ def normalizar_columnas(gdf):
     return gdf
 
 
+def filtrar_por_comuna(gdf, nombre_comuna):
+    if gdf.empty or "COMUNA" not in gdf.columns:
+        return crear_gdf_vacio()
+
+    comuna_norm = normalizar(nombre_comuna)
+
+    gdf_filtrado = gdf[
+        gdf["COMUNA"].apply(normalizar) == comuna_norm
+    ].copy()
+
+    if gdf_filtrado.empty:
+        return crear_gdf_vacio()
+
+    return gdf_filtrado
+
+
 # =========================================================
 # LÍMITE URBANO PRMS
 # =========================================================
@@ -404,7 +428,7 @@ def detectar_limite_urbano_prms(lat, lon, gdf_prms_lu):
 
 
 # =========================================================
-# HOMOLOGACIÓN SMA 491
+# HOMOLOGACIÓN DS38
 # =========================================================
 
 def detectar_categorias_oguc(fila):
@@ -422,13 +446,7 @@ def detectar_categorias_oguc(fila):
 
     categorias = set()
 
-    # =========================================================
-    # REGLA ESPECÍFICA PRMS
-    # Zona Habitacional Mixta
-    # Art. 3.1.1.1 PRMS:
-    # Residencial + Equipamiento + Productiva inofensiva + Infraestructura/Transporte
-    # =========================================================
-
+    # Regla específica PRMS: Zona Habitacional Mixta
     if (
         "zona habitacional mixto" in texto_norm
         or "zona habitacional mixta" in texto_norm
@@ -526,25 +544,55 @@ def homologar_por_tabla_sma491(categorias):
     cats = set(categorias)
 
     if cats in [{"AV"}, {"EP"}, {"AV", "EP"}]:
-        return "Zona I", "55 dBA", "45 dBA", "AV/EP solos o combinados entre sí se homologan a Zona I."
+        return (
+            "Zona I",
+            "55 dBA",
+            "45 dBA",
+            "AV/EP solos o combinados entre sí se homologan a Zona I."
+        )
 
     if (
         ("AP" in cats or "Inf" in cats)
         and "R" not in cats
         and "Eq" not in cats
     ):
-        return "Zona IV", "70 dBA", "70 dBA", "Actividad Productiva y/o Infraestructura sin uso Residencial ni Equipamiento."
+        return (
+            "Zona IV",
+            "70 dBA",
+            "70 dBA",
+            "Actividad Productiva y/o Infraestructura sin uso Residencial ni Equipamiento."
+        )
 
     if "AP" in cats or "Inf" in cats:
-        return "Zona III", "65 dBA", "50 dBA", "Combinación con Actividad Productiva y/o Infraestructura junto a R/Eq/AV/EP."
+        return (
+            "Zona III",
+            "65 dBA",
+            "50 dBA",
+            "Combinación con Actividad Productiva y/o Infraestructura junto a R/Eq/AV/EP."
+        )
 
     if "Eq" in cats:
-        return "Zona II", "60 dBA", "45 dBA", "Combinación con Equipamiento, sin Actividad Productiva ni Infraestructura."
+        return (
+            "Zona II",
+            "60 dBA",
+            "45 dBA",
+            "Combinación con Equipamiento, sin Actividad Productiva ni Infraestructura."
+        )
 
     if "R" in cats:
-        return "Zona I", "55 dBA", "45 dBA", "Uso Residencial solo o combinado únicamente con Área Verde/Espacio Público."
+        return (
+            "Zona I",
+            "55 dBA",
+            "45 dBA",
+            "Uso Residencial solo o combinado únicamente con Área Verde/Espacio Público."
+        )
 
-    return "No clasificada", "-", "-", "No se detectaron categorías suficientes para homologar automáticamente."
+    return (
+        "No clasificada",
+        "-",
+        "-",
+        "No se detectaron categorías suficientes para homologar automáticamente."
+    )
 
 
 def homologar_ds38(fila, estado_lu=None):
@@ -583,6 +631,7 @@ def homologar_ds38(fila, estado_lu=None):
 
     return zona, dia, noche, criterio, categorias_texto
 
+
 # =========================================================
 # BÚSQUEDA ESPACIAL
 # =========================================================
@@ -593,6 +642,9 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         geometry=[Point(lon, lat)],
         crs="EPSG:4326"
     )
+
+    if gdf.empty:
+        return gpd.GeoDataFrame()
 
     resultado = gpd.sjoin(
         punto,
@@ -610,9 +662,7 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
             return resultado
 
     if tolerancia_m == 0:
-        resultado["metodo_busqueda"] = "Sin coincidencia"
-        resultado["distancia_m"] = None
-        return resultado
+        return gpd.GeoDataFrame()
 
     try:
         punto_m = punto.to_crs(epsg=32719)
@@ -625,9 +675,7 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         cercanos = gdf_m[gdf_m["distancia_m"] <= tolerancia_m].copy()
 
         if cercanos.empty:
-            resultado["metodo_busqueda"] = "Sin coincidencia"
-            resultado["distancia_m"] = None
-            return resultado
+            return gpd.GeoDataFrame()
 
         cercano = cercanos.sort_values("distancia_m").iloc[[0]].copy()
         distancia = round(float(cercano.iloc[0]["distancia_m"]), 2)
@@ -640,9 +688,7 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         return cercano
 
     except Exception:
-        resultado["metodo_busqueda"] = "Error en tolerancia"
-        resultado["distancia_m"] = None
-        return resultado
+        return gpd.GeoDataFrame()
 
 
 def debe_revisar_prms(fila):
@@ -667,7 +713,12 @@ def debe_revisar_prms(fila):
 
 
 def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m):
-    resultado_prc = buscar_punto_en_capa(lat, lon, gdf_prc, tolerancia_m)
+    resultado_prc = buscar_punto_en_capa(
+        lat,
+        lon,
+        gdf_prc,
+        tolerancia_m
+    )
 
     if not resultado_prc.empty:
         fila_prc = resultado_prc.iloc[0]
@@ -720,15 +771,19 @@ def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m):
             )
             return resultado_prms
 
-    return resultado_prc
+    return gpd.GeoDataFrame()
 
 
 # =========================================================
-# RESULTADO
+# RESULTADOS
 # =========================================================
 
 def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m):
-    estado_lu, detalle_lu = detectar_limite_urbano_prms(lat, lon, gdf_prms_lu)
+    estado_lu, detalle_lu = detectar_limite_urbano_prms(
+        lat,
+        lon,
+        gdf_prms_lu
+    )
 
     resultado = buscar_jerarquico(
         lat,
@@ -746,14 +801,15 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     if estado_lu == "Fuera de límite urbano PRMS / área rural":
         st.warning(
             "El punto consultado se encuentra fuera del límite urbano PRMS. "
-            "La homologación debe revisarse con especial cuidado, considerando condición rural, PRMS "
-            "y eventuales restricciones al desarrollo urbano."
+            "Se homologa preliminarmente como Zona Rural del D.S. N°38/2011 MMA."
         )
 
     if resultado.empty:
-        st.warning("No se encontró homologación para el punto.")
+        st.warning("No se encontró información territorial para el punto.")
         return
+
     fila = resultado.iloc[0]
+
     zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
         fila,
         estado_lu
@@ -807,14 +863,15 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     st.write(criterio)
 
     if "PRC Santiago" in str(criterio):
-        st.info("Homologación aplicada desde tabla maestra PRC validada por ordenanza comunal.")
+        st.info(
+            "Homologación aplicada desde tabla maestra PRC validada por ordenanza comunal."
+        )
 
     advertencia_lu = ""
     if estado_lu == "Fuera de límite urbano PRMS / área rural":
         advertencia_lu = (
             " Asimismo, el punto se encuentra fuera del límite urbano PRMS, "
-            "por lo que la homologación debe entenderse como preliminar y sujeta a revisión "
-            "de la condición rural y normativa territorial aplicable."
+            "por lo que corresponde su evaluación como Zona Rural del D.S. N°38/2011 MMA."
         )
 
     advertencia_tol = ""
@@ -832,7 +889,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     texto = f"""
 Para el punto consultado, se identifica información territorial proveniente de {fuente}, correspondiente a la zona IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}. De acuerdo con los atributos de uso de suelo de la cartografía revisada, se identifican las siguientes categorías para efectos de homologación acústica: {categorias}.
 
-El punto presenta la siguiente clasificación territorial según la capa PRMS_LU: {estado_lu}. Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_jerarquia}{advertencia_lu}{advertencia_tol}
+El punto presenta la siguiente clasificación territorial según la capa PRMS_LU: {estado_lu}. Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente y el D.S. N°38/2011 del MMA, la zona se homologa preliminarmente como {zona_ds38}, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_jerarquia}{advertencia_lu}{advertencia_tol}
 """
 
     st.subheader("Texto técnico preliminar")
@@ -840,7 +897,7 @@ El punto presenta la siguiente clasificación territorial según la capa PRMS_LU
 
     with st.expander("Ver todos los atributos de la capa"):
         st.write(pd.DataFrame([fila.drop(labels=["geometry"], errors="ignore")]))
-        
+
 
 # =========================================================
 # SESSION STATE
@@ -871,6 +928,7 @@ comuna_clave = st.selectbox(
     comunas_ordenadas,
     format_func=lambda x: indice[x]["nombre"]
 )
+
 if "comuna_actual" not in st.session_state:
     st.session_state.comuna_actual = comuna_clave
 
@@ -878,72 +936,81 @@ if st.session_state.comuna_actual != comuna_clave:
     st.session_state.lat = None
     st.session_state.lon = None
     st.session_state.comuna_actual = comuna_clave
-    
+
 comuna_info = indice[comuna_clave]
 
-if comuna_info["archivo"]:
 
+# =========================================================
+# CARGA PRC
+# =========================================================
+
+if comuna_info["archivo"]:
     gdf_prc = cargar_shp(comuna_info["archivo"])
     gdf_prc = normalizar_columnas(gdf_prc)
     gdf_prc["fuente_normativa"] = "PRC"
-
 else:
+    gdf_prc = crear_gdf_vacio()
 
-    gdf_prc = gpd.GeoDataFrame(
-        {
-            "COMUNA": [],
-            "ZONA": [],
-            "NOMBRE": [],
-            "UPERM": [],
-            "UPREF": [],
-            "UPROH": [],
-            "SUELO": [],
-            "DECRETO": [],
-            "PLANO": [],
-            "fuente_normativa": [],
-            "archivo_origen": [],
-            "observacion_jerarquia": []
-        },
-        geometry=[],
-        crs="EPSG:4326"
-    )
+
+# =========================================================
+# CARGA PRMS
+# =========================================================
 
 capa_prms_lu = buscar_capa_prms_lu()
 capa_prms_uso = buscar_capa_prms_uso_suelo()
 
-gdf_prms_lu_total = (
-    cargar_shp(capa_prms_lu)
-    if capa_prms_lu
-    else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
-)
+gdf_prms_lu_total = cargar_shp(capa_prms_lu) if capa_prms_lu else crear_gdf_vacio()
+gdf_prms_uso_total = cargar_shp(capa_prms_uso) if capa_prms_uso else crear_gdf_vacio()
 
-gdf_prms_uso_total = (
-    cargar_shp(capa_prms_uso)
-    if capa_prms_uso
-    else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
-)
+gdf_prms_lu_total = normalizar_columnas(gdf_prms_lu_total)
+gdf_prms_uso_total = normalizar_columnas(gdf_prms_uso_total)
+
 
 # =========================================================
 # RECORTE PRMS POR COMUNA
 # =========================================================
 
-xmin, ymin, xmax, ymax = gdf_prc.total_bounds
+if not gdf_prc.empty:
+    xmin, ymin, xmax, ymax = gdf_prc.total_bounds
 
-try:
-    gdf_prms_lu = gdf_prms_lu_total.cx[
-        xmin:xmax,
-        ymin:ymax
-    ].copy()
-except:
-    gdf_prms_lu = gdf_prms_lu_total.copy()
+    try:
+        gdf_prms_lu = gdf_prms_lu_total.cx[
+            xmin:xmax,
+            ymin:ymax
+        ].copy()
+    except Exception:
+        gdf_prms_lu = gdf_prms_lu_total.copy()
 
-try:
-    gdf_prms_uso = gdf_prms_uso_total.cx[
-        xmin:xmax,
-        ymin:ymax
-    ].copy()
-except:
-    gdf_prms_uso = gdf_prms_uso_total.copy()
+    try:
+        gdf_prms_uso = gdf_prms_uso_total.cx[
+            xmin:xmax,
+            ymin:ymax
+        ].copy()
+    except Exception:
+        gdf_prms_uso = gdf_prms_uso_total.copy()
+
+else:
+    gdf_prms_uso = filtrar_por_comuna(
+        gdf_prms_uso_total,
+        comuna_info["nombre"]
+    )
+
+    if not gdf_prms_uso.empty:
+        xmin, ymin, xmax, ymax = gdf_prms_uso.total_bounds
+
+        try:
+            gdf_prms_lu = gdf_prms_lu_total.cx[
+                xmin:xmax,
+                ymin:ymax
+            ].copy()
+        except Exception:
+            gdf_prms_lu = gdf_prms_lu_total.copy()
+
+    else:
+        gdf_prms_lu = filtrar_por_comuna(
+            gdf_prms_lu_total,
+            comuna_info["nombre"]
+        )
 
 gdf_prms_lu = normalizar_columnas(gdf_prms_lu)
 gdf_prms_lu["fuente_normativa"] = "PRMS_LU"
@@ -952,13 +1019,15 @@ gdf_prms_uso = normalizar_columnas(gdf_prms_uso)
 gdf_prms_uso["fuente_normativa"] = "PRMS_USO_Suelo"
 
 st.success(
-    f"Comuna seleccionada: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | "
-    f"PRMS_LU comuna: {len(gdf_prms_lu)} | PRMS_USO_Suelo comuna: {len(gdf_prms_uso)}"
+    f"Comuna seleccionada: {comuna_info['nombre']} | "
+    f"Polígonos PRC: {len(gdf_prc)} | "
+    f"PRMS_LU comuna: {len(gdf_prms_lu)} | "
+    f"PRMS_USO_Suelo comuna: {len(gdf_prms_uso)}"
 )
 
 
 # =========================================================
-# INSPECCIÓN DE CAPAS
+# INSPECCIÓN CAPAS
 # =========================================================
 
 with st.expander("Ver capas usadas"):
@@ -1000,7 +1069,6 @@ direccion = st.text_input(
 )
 
 if st.button("Buscar dirección y homologar"):
-
     geolocator = Nominatim(
         user_agent="homologador_ds38_rm",
         timeout=10
@@ -1064,8 +1132,9 @@ if st.button("Homologar coordenadas"):
     st.session_state.lon = lon_manual
     st.success("Coordenadas cargadas correctamente")
 
+
 # =========================================================
-# CENTROS COMUNALES
+# CENTROS COMUNALES DE RESPALDO
 # =========================================================
 
 CENTROS_COMUNAS = {
@@ -1079,6 +1148,8 @@ CENTROS_COMUNAS = {
     "san pedro": [-33.90, -71.47],
     "tiltil": [-33.08, -70.93]
 }
+
+
 # =========================================================
 # MAPA
 # =========================================================
@@ -1086,57 +1157,34 @@ CENTROS_COMUNAS = {
 centro = [-33.45, -70.66]
 
 try:
-
-    # =====================================================
-    # PRIORIDAD 1: PRC
-    # =====================================================
-
     if not gdf_prc.empty:
-
         bounds = gdf_prc.total_bounds
 
         if not pd.isna(bounds).any():
-
             centro = [
                 (bounds[1] + bounds[3]) / 2,
                 (bounds[0] + bounds[2]) / 2
             ]
 
-    # =====================================================
-    # PRIORIDAD 2: PRMS
-    # =====================================================
-
     elif not gdf_prms_uso.empty:
-
         bounds = gdf_prms_uso.total_bounds
 
         if not pd.isna(bounds).any():
-
             centro = [
                 (bounds[1] + bounds[3]) / 2,
                 (bounds[0] + bounds[2]) / 2
             ]
 
-    # =====================================================
-    # PRIORIDAD 3: CENTRO PREDEFINIDO
-    # =====================================================
-
     else:
+        clave_centro = normalizar(comuna_info["nombre"])
 
-        clave = normalizar(comuna_info["nombre"])
+        if clave_centro in CENTROS_COMUNAS:
+            centro = CENTROS_COMUNAS[clave_centro]
 
-        if clave in CENTROS_COMUNAS:
-            centro = CENTROS_COMUNAS[clave]
-
-except:
-    pass
-
-# =========================================================
-# SI EXISTE PUNTO CONSULTADO
-# =========================================================
+except Exception:
+    centro = [-33.45, -70.66]
 
 if st.session_state.lat is not None and st.session_state.lon is not None:
-
     centro = [
         st.session_state.lat,
         st.session_state.lon
@@ -1146,10 +1194,8 @@ m = folium.Map(
     location=centro,
     zoom_start=13
 )
-# =========================================================
-# CAPA INVISIBLE CLICKEABLE
-# =========================================================
 
+# Capa invisible clickeable
 folium.Rectangle(
     bounds=[
         [-34.35, -71.75],
@@ -1163,33 +1209,36 @@ folium.Rectangle(
     name="Área clickeable"
 ).add_to(m)
 
+
 # PRMS_LU
 try:
     gdf_prms_lu_mapa = gdf_prms_lu.copy()
-    gdf_prms_lu_mapa["geometry"] = gdf_prms_lu_mapa.geometry.simplify(
-        0.0004,
-        preserve_topology=True
-    )
 
-    folium.GeoJson(
-        gdf_prms_lu_mapa,
-        name="PRMS_LU",
-        style_function=lambda x: {
-            "fillOpacity": 0.00,
-            "weight": 2,
-            "color": "black"
-        }
-    ).add_to(m)
-except:
+    if not gdf_prms_lu_mapa.empty:
+        gdf_prms_lu_mapa["geometry"] = gdf_prms_lu_mapa.geometry.simplify(
+            0.0004,
+            preserve_topology=True
+        )
+
+        folium.GeoJson(
+            gdf_prms_lu_mapa,
+            name="PRMS_LU",
+            style_function=lambda x: {
+                "fillOpacity": 0.00,
+                "weight": 2,
+                "color": "black"
+            }
+        ).add_to(m)
+
+except Exception:
     pass
+
 
 # PRMS_USO_Suelo
 try:
-
     gdf_prms_uso_mapa = gdf_prms_uso.copy()
 
     if not gdf_prms_uso_mapa.empty:
-
         gdf_prms_uso_mapa["geometry"] = gdf_prms_uso_mapa.geometry.simplify(
             0.0008,
             preserve_topology=True
@@ -1217,39 +1266,43 @@ try:
             )
         ).add_to(m)
 
-except:
+except Exception:
     pass
 
+
 # PRC comuna seleccionada
+try:
+    if not gdf_prc.empty:
+        gdf_prc_mapa = gdf_prc.copy()
 
-if not gdf_prc.empty:
-
-    gdf_prc_mapa = gdf_prc.copy()
-
-    gdf_prc_mapa["geometry"] = gdf_prc_mapa.geometry.simplify(
-        0.0003,
-        preserve_topology=True
-    )
-
-    folium.GeoJson(
-        gdf_prc_mapa,
-        name=f"PRC {comuna_info['nombre']}",
-        tooltip=folium.GeoJsonTooltip(
-            fields=[
-                col for col in ["COMUNA", "ZONA", "NOMBRE"]
-                if col in gdf_prc_mapa.columns
-            ],
-            aliases=[
-                alias for col, alias in zip(
-                    ["COMUNA", "ZONA", "NOMBRE"],
-                    ["Comuna", "Zona", "Nombre"]
-                )
-                if col in gdf_prc_mapa.columns
-            ]
+        gdf_prc_mapa["geometry"] = gdf_prc_mapa.geometry.simplify(
+            0.0003,
+            preserve_topology=True
         )
-    ).add_to(m)
 
-if st.session_state.lat and st.session_state.lon:
+        folium.GeoJson(
+            gdf_prc_mapa,
+            name=f"PRC {comuna_info['nombre']}",
+            tooltip=folium.GeoJsonTooltip(
+                fields=[
+                    col for col in ["COMUNA", "ZONA", "NOMBRE"]
+                    if col in gdf_prc_mapa.columns
+                ],
+                aliases=[
+                    alias for col, alias in zip(
+                        ["COMUNA", "ZONA", "NOMBRE"],
+                        ["Comuna", "Zona", "Nombre"]
+                    )
+                    if col in gdf_prc_mapa.columns
+                ]
+            )
+        ).add_to(m)
+
+except Exception:
+    pass
+
+
+if st.session_state.lat is not None and st.session_state.lon is not None:
     folium.Marker(
         [
             st.session_state.lat,
@@ -1272,16 +1325,17 @@ map_data = st_folium(
 # CLICK MAPA
 # =========================================================
 
-if map_data["last_clicked"]:
+if map_data and map_data.get("last_clicked"):
     st.session_state.lat = map_data["last_clicked"]["lat"]
     st.session_state.lon = map_data["last_clicked"]["lng"]
+    st.rerun()
 
 
 # =========================================================
-# RESULTADO
+# RESULTADO FINAL
 # =========================================================
 
-if st.session_state.lat and st.session_state.lon:
+if st.session_state.lat is not None and st.session_state.lon is not None:
     mostrar_resultado(
         st.session_state.lat,
         st.session_state.lon,
