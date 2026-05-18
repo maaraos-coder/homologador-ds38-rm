@@ -444,7 +444,16 @@ def homologar_por_tabla_sma491(categorias):
     return "No clasificada", "-", "-", "No se detectaron categorías suficientes para homologar automáticamente."
 
 
-def homologar_ds38(fila):
+def homologar_ds38(fila, estado_lu=None):
+    if estado_lu == "Fuera de límite urbano PRMS / área rural":
+        return (
+            "Zona Rural",
+            "Rf + 10 dBA, con tope Zona III",
+            "Rf + 10 dBA, con tope Zona III",
+            "El punto se encuentra fuera del límite urbano PRMS; corresponde evaluación como Zona Rural del D.S. N°38/2011 MMA.",
+            "Rural"
+        )
+
     comuna = fila.get("COMUNA", "")
     zona_prc = fila.get("ZONA", "")
     nombre_zona = fila.get("NOMBRE", "")
@@ -644,7 +653,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     fila = resultado.iloc[0]
 
-    zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(fila)
+   zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(fila, estado_lu)
 
     metodo = fila.get("metodo_busqueda", "")
     distancia = fila.get("distancia_m", "")
