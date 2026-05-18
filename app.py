@@ -887,9 +887,32 @@ comuna_clave = st.selectbox(
 
 comuna_info = indice[comuna_clave]
 
-gdf_prc = cargar_shp(comuna_info["archivo"])
-gdf_prc = normalizar_columnas(gdf_prc)
-gdf_prc["fuente_normativa"] = "PRC"
+if comuna_info["archivo"]:
+
+    gdf_prc = cargar_shp(comuna_info["archivo"])
+    gdf_prc = normalizar_columnas(gdf_prc)
+    gdf_prc["fuente_normativa"] = "PRC"
+
+else:
+
+    gdf_prc = gpd.GeoDataFrame(
+        {
+            "COMUNA": [],
+            "ZONA": [],
+            "NOMBRE": [],
+            "UPERM": [],
+            "UPREF": [],
+            "UPROH": [],
+            "SUELO": [],
+            "DECRETO": [],
+            "PLANO": [],
+            "fuente_normativa": [],
+            "archivo_origen": [],
+            "observacion_jerarquia": []
+        },
+        geometry=[],
+        crs="EPSG:4326"
+    )
 
 capa_prms_lu = buscar_capa_prms_lu()
 capa_prms_uso = buscar_capa_prms_uso_suelo()
@@ -935,7 +958,7 @@ gdf_prms_uso = normalizar_columnas(gdf_prms_uso)
 gdf_prms_uso["fuente_normativa"] = "PRMS_USO_Suelo"
 
 st.success(
-    f"PRC cargado: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | "
+    f"Comuna seleccionada: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | "
     f"PRMS_LU comuna: {len(gdf_prms_lu)} | PRMS_USO_Suelo comuna: {len(gdf_prms_uso)}"
 )
 
