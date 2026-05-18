@@ -651,9 +651,12 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         st.warning("No se encontró homologación para el punto.")
         return
 
-    fila = resultado.iloc[0]
+        fila = resultado.iloc[0]
 
-   zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(fila, estado_lu)
+    zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
+        fila,
+        estado_lu
+    )
 
     metodo = fila.get("metodo_busqueda", "")
     distancia = fila.get("distancia_m", "")
