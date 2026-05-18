@@ -13,18 +13,11 @@ st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
 st.subheader("Región Metropolitana - Motor PRC + PRMS + Límite Urbano")
+
 if st.button("Limpiar caché"):
     st.cache_data.clear()
     st.success("Caché eliminada correctamente.")
     st.rerun()
-def listar_shapefiles_prms():
-    shps = listar_shapefiles()
-
-    return [
-        a for a in shps
-        if "/PRMS/" in a
-        and a.endswith(".shp")
-    ]
 
 st.warning(
     "Herramienta de apoyo técnico para homologación preliminar de zonas DS38/11 MMA. "
@@ -203,7 +196,10 @@ def normalizar_columnas(gdf):
         "ZONIF": "ZONA",
         "USO": "UPERM",
         "USO_SUELO": "UPERM",
-        "DESTINO": "UPERM"
+        "DESTINO": "UPERM",
+        "NOM_USO": "NOMBRE",
+        "TIPO": "NOMBRE",
+        "CLASE": "NOMBRE"
     }
 
     gdf = gdf.rename(columns=renombres)
@@ -320,6 +316,8 @@ def detectar_categorias_oguc(fila):
         or "productivas" in texto_norm
         or "productiva" in texto_norm
         or "servicio de caracter industrial" in texto_norm
+        or "zona industrial" in texto_norm
+        or "industrial exclusiva" in texto_norm
     ):
         categorias.add("AP")
 
@@ -455,6 +453,39 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         return resultado
 
 
+def buscar_punto_mas_cercano(lat, lon, gdf, max_distancia_m=1000):
+    punto = gpd.GeoDataFrame(
+        {"id": [1]},
+        geometry=[Point(lon, lat)],
+        crs="EPSG:4326"
+    )
+
+    try:
+        punto_m = punto.to_crs(epsg=32719)
+        gdf_m = gdf.to_crs(epsg=32719).copy()
+
+        punto_geom = punto_m.geometry.iloc[0]
+        gdf_m["distancia_m"] = gdf_m.geometry.distance(punto_geom)
+
+        cercanos = gdf_m[gdf_m["distancia_m"] <= max_distancia_m].copy()
+
+        if cercanos.empty:
+            return gpd.GeoDataFrame()
+
+        cercano = cercanos.sort_values("distancia_m").iloc[[0]].copy()
+        distancia = round(float(cercano.iloc[0]["distancia_m"]), 2)
+
+        cercano = cercano.to_crs(epsg=4326)
+        cercano["id"] = 1
+        cercano["metodo_busqueda"] = "PRMS más cercano"
+        cercano["distancia_m"] = distancia
+
+        return cercano
+
+    except Exception:
+        return gpd.GeoDataFrame()
+
+
 def debe_revisar_prms(fila):
     texto = texto_atributos(fila)
 
@@ -468,6 +499,8 @@ def debe_revisar_prms(fila):
         "remítase prms",
         "remitirse prms",
         "normativa prms",
+        "segun el prms",
+        "según el prms",
         "prms"
     ]
 
@@ -475,48 +508,47 @@ def debe_revisar_prms(fila):
 
 
 def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
-
     resultado_prc = buscar_punto_en_capa(lat, lon, gdf_prc, tolerancia_m)
 
     if not resultado_prc.empty and not pd.isna(resultado_prc.iloc[0].get("ZONA")):
-
         fila_prc = resultado_prc.iloc[0]
 
         if debe_revisar_prms(fila_prc):
-
             resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
 
-            if not resultado_prms.empty and not pd.isna(resultado_prms.iloc[0].get("ZONA")):
+            if resultado_prms.empty or pd.isna(resultado_prms.iloc[0].get("ZONA")):
+                resultado_prms = buscar_punto_mas_cercano(
+                    lat,
+                    lon,
+                    gdf_prms,
+                    max_distancia_m=1000
+                )
 
+            if not resultado_prms.empty and not pd.isna(resultado_prms.iloc[0].get("ZONA")):
                 resultado_prms["fuente_normativa"] = "PRMS"
                 resultado_prms["observacion_jerarquia"] = (
                     "El PRC contiene una referencia a revisión del PRMS; "
                     "por ello se utilizó la capa PRMS para complementar la homologación."
                 )
-
                 return resultado_prms
 
             resultado_prc["fuente_normativa"] = "PRC"
             resultado_prc["observacion_jerarquia"] = (
                 "El PRC indica revisar PRMS, pero no se encontró coincidencia PRMS para el punto consultado."
             )
-
             return resultado_prc
 
         resultado_prc["fuente_normativa"] = "PRC"
         resultado_prc["observacion_jerarquia"] = "Se utilizó la zonificación del PRC comunal."
-
         return resultado_prc
 
     resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
 
     if not resultado_prms.empty and not pd.isna(resultado_prms.iloc[0].get("ZONA")):
-
         resultado_prms["fuente_normativa"] = "PRMS"
         resultado_prms["observacion_jerarquia"] = (
             "No se encontró PRC aplicable para el punto; se utilizó PRMS."
         )
-
         return resultado_prms
 
     return resultado_prc
@@ -560,6 +592,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
         st.warning(
             f"El punto no cayó exactamente dentro del polígono. "
             f"Se usó el polígono más cercano a {distancia} m."
+        )
+    elif metodo == "PRMS más cercano":
+        st.warning(
+            f"No se encontró intersección directa con PRMS. "
+            f"Se usó el polígono PRMS más cercano a {distancia} m."
         )
     else:
         st.success("Punto ubicado dentro de una capa IPT.")
@@ -612,6 +649,12 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
             f" Cabe hacer presente que el punto no intersectó directamente el polígono "
             f"de zonificación, por lo que se aplicó una tolerancia espacial de {tolerancia_m} m, "
             f"identificándose el polígono más cercano a {distancia} m."
+        )
+
+    if metodo == "PRMS más cercano":
+        advertencia_tol = (
+            f" Cabe hacer presente que no se encontró intersección directa con la capa PRMS, "
+            f"por lo que se utilizó el polígono PRMS más cercano, ubicado a {distancia} m."
         )
 
     advertencia_jerarquia = ""
@@ -915,4 +958,3 @@ if st.session_state.lat and st.session_state.lon:
         gdf_lu,
         tolerancia_m
     )
-
