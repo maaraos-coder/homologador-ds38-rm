@@ -86,11 +86,7 @@ def listar_shapefiles_prms():
     return [
         a for a in shps
         if "/PRMS/" in a
-        and (
-            "USO_Suelo" in a
-            or "LU" in a
-            or "Rural" in a
-        )
+        and a.endswith(".shp")
     ]
 
 
