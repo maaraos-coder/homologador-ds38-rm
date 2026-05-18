@@ -1057,7 +1057,21 @@ if st.button("Homologar coordenadas"):
     st.session_state.lon = lon_manual
     st.success("Coordenadas cargadas correctamente")
 
+# =========================================================
+# CENTROS COMUNALES
+# =========================================================
 
+CENTROS_COMUNAS = {
+    "alhue": [-34.03, -71.10],
+    "buin": [-33.73, -70.74],
+    "calera de tango": [-33.67, -70.82],
+    "el monte": [-33.68, -70.98],
+    "lampa": [-33.29, -70.88],
+    "maria pinto": [-33.51, -71.13],
+    "san jose de maipo": [-33.64, -70.35],
+    "san pedro": [-33.90, -71.47],
+    "tiltil": [-33.08, -70.93]
+}
 # =========================================================
 # MAPA
 # =========================================================
@@ -1065,28 +1079,57 @@ if st.button("Homologar coordenadas"):
 centro = [-33.45, -70.66]
 
 try:
+
+    # =====================================================
+    # PRIORIDAD 1: PRC
+    # =====================================================
+
     if not gdf_prc.empty:
+
         bounds = gdf_prc.total_bounds
 
         if not pd.isna(bounds).any():
+
             centro = [
                 (bounds[1] + bounds[3]) / 2,
                 (bounds[0] + bounds[2]) / 2
             ]
 
+    # =====================================================
+    # PRIORIDAD 2: PRMS
+    # =====================================================
+
     elif not gdf_prms_uso.empty:
+
         bounds = gdf_prms_uso.total_bounds
 
         if not pd.isna(bounds).any():
+
             centro = [
                 (bounds[1] + bounds[3]) / 2,
                 (bounds[0] + bounds[2]) / 2
             ]
 
+    # =====================================================
+    # PRIORIDAD 3: CENTRO PREDEFINIDO
+    # =====================================================
+
+    else:
+
+        clave = normalizar(comuna_info["nombre"])
+
+        if clave in CENTROS_COMUNAS:
+            centro = CENTROS_COMUNAS[clave]
+
 except:
-    centro = [-33.45, -70.66]
+    pass
+
+# =========================================================
+# SI EXISTE PUNTO CONSULTADO
+# =========================================================
 
 if st.session_state.lat and st.session_state.lon:
+
     centro = [
         st.session_state.lat,
         st.session_state.lon
