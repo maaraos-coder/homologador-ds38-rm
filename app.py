@@ -957,6 +957,22 @@ m = folium.Map(
     location=centro,
     zoom_start=13
 )
+# =========================================================
+# CAPA INVISIBLE CLICKEABLE
+# =========================================================
+
+folium.Rectangle(
+    bounds=[
+        [-34.35, -71.75],
+        [-32.75, -69.75]
+    ],
+    color=None,
+    fill=True,
+    fill_opacity=0.01,
+    weight=0,
+    interactive=True,
+    name="Área clickeable"
+).add_to(m)
 
 # PRMS_LU
 try:
