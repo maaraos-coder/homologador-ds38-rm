@@ -6,3 +6,10 @@ Santiago,Zona E,Zona E,R+Eq+AP+Inf+EP+AV,Zona III,65,50,"PRC Santiago Art. 30 Zo
 Santiago,Zona F,Zona F,Eq+EP+AV,Zona II,60,45,"PRC Santiago Zona F: equipamiento cultural/deportivo, espacio público y áreas verdes."
 Santiago,Zona G,Zona G,EP+AV,Zona I,55,45,PRC Santiago Zona G: espacio público y áreas verdes.
 Santiago,Zona H,Zona H,AV+Eq,Zona II,60,45,PRC Santiago Zona H remite a PRMS art. 5.2.4.1.
+Providencia,UR,Zona de Uso Residencial,R + AV + EP,Zona I,55,45,PRC Providencia Art. 6.2.12 Zona exclusivamente residencial.
+Providencia,UpR,Zona de Uso preferentemente Residencial,R + Eq + AV + EP,Zona II,60,45,PRC Providencia Art. 6.2.13 permite equipamientos compatibles.
+Providencia,UpR y Er,Zona de Uso pref. Residencial y Equipamiento restringido,R + Eq + AV + EP,Zona II,60,45,PRC Providencia Art. 6.2.14 incorpora equipamiento restringido.
+Providencia,UpR y E,Zona de Uso pref. Residencial y Equipamiento,R + Eq + AV + EP,Zona II,60,45,PRC Providencia Art. 6.2.15 incorpora equipamiento.
+Providencia,UpR y ECr,Zona de Uso pref. Residencial y Equipamiento Comercio restringido,R + Eq + AV + EP,Zona II,60,45,PRC Providencia Art. 6.2.16 incorpora comercio restringido compatible.
+Providencia,UpEC,Zona de Uso preferente Equipamiento Comercial,Eq + AP + AV + EP,Zona III,65,50,PRC Providencia Art. 6.2.17 predominio comercial y equipamiento.
+Providencia,UpAP e Ir,Zona de Uso pref. Actividades Productivas e Industria restringida,AP + Inf,Zona IV,70,70,PRC Providencia Art. 6.2.18 actividades productivas e industria restringida.
