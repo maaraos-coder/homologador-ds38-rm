@@ -13,6 +13,14 @@ st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
 st.subheader("Región Metropolitana - Motor PRC + PRMS + Límite Urbano")
+def listar_shapefiles_prms():
+    shps = listar_shapefiles()
+
+    return [
+        a for a in shps
+        if "/PRMS/" in a
+        and a.endswith(".shp")
+    ]
 
 st.warning(
     "Herramienta de apoyo técnico para homologación preliminar de zonas DS38/11 MMA. "
