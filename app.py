@@ -190,22 +190,125 @@ def buscar_capa_prms_uso_suelo():
 
 @st.cache_data
 def crear_indice_comunas():
+
     indice = {}
 
-    for shp in listar_shapefiles_prc():
-        nombre = shp.split("/")[-1]
+    for shp in listar_shapefiles():
 
-        comuna = nombre.replace("IPT_13_PRC_", "")
-        comuna = comuna.replace("IPT_13_PNSECC_", "")
-        comuna = comuna.replace(".shp", "")
-        comuna_limpia = comuna.replace("_", " ")
+        nombre_archivo = shp.split("/")[-1]
 
-        clave = normalizar(comuna_limpia)
+        # =====================================================
+        # FILTRAR SOLO CAPAS TERRITORIALES
+        # =====================================================
+
+        if not shp.endswith(".shp"):
+            continue
+
+        if "Patrimonio" in shp:
+            continue
+
+        if "ZNE" in shp:
+            continue
+
+        if "poligono" in shp.lower():
+            continue
+
+        # =====================================================
+        # PRI / PRC / PNSECC
+        # =====================================================
+
+        if (
+            "/PRC/" not in shp
+            and "/PRI/" not in shp
+            and "PNSECC" not in shp
+        ):
+            continue
+
+        # =====================================================
+        # LIMPIEZA NOMBRE
+        # =====================================================
+
+        comuna = nombre_archivo
+
+        reemplazos = [
+            "IPT_13_PRC_",
+            "IPT_13_PRI_",
+            "IPT_13_PNSECC_",
+            ".shp"
+        ]
+
+        for r in reemplazos:
+            comuna = comuna.replace(r, "")
+
+        comuna = comuna.replace("_", " ")
+        comuna = comuna.strip()
+
+        # =====================================================
+        # NORMALIZACIONES ESPECIALES
+        # =====================================================
+
+        especiales = {
+            "Nunoa AP": "Ñuñoa",
+            "Pudahuel San Francisco": "Pudahuel"
+        }
+
+        if comuna in especiales:
+            comuna = especiales[comuna]
+
+        # =====================================================
+        # ELIMINAR SUFIJOS EXTRAÑOS
+        # =====================================================
+
+        basura = [
+            " AP",
+            " Rural",
+            " Urbano"
+        ]
+
+        for b in basura:
+            if comuna.endswith(b):
+                comuna = comuna.replace(b, "").strip()
+
+        # =====================================================
+        # CREAR CLAVE
+        # =====================================================
+
+        clave = normalizar(comuna)
+
+        # =====================================================
+        # EVITAR DUPLICADOS
+        # =====================================================
 
         if clave not in indice:
+
             indice[clave] = {
-                "nombre": comuna_limpia,
+                "nombre": comuna,
                 "archivo": shp
+            }
+
+    # =========================================================
+    # AGREGAR COMUNAS FALTANTES MANUALMENTE
+    # =========================================================
+
+    faltantes = {
+        "alhue": "Alhué",
+        "buin": "Buin",
+        "calera de tango": "Calera de Tango",
+        "el monte": "El Monte",
+        "lampa": "Lampa",
+        "maria pinto": "María Pinto",
+        "san jose de maipo": "San José de Maipo",
+        "san pedro": "San Pedro",
+        "tiltil": "Tiltil"
+    }
+
+    for clave, nombre in faltantes.items():
+
+        if clave not in indice:
+
+            indice[clave] = {
+                "nombre": nombre,
+                "archivo": None
             }
 
     return indice
