@@ -1078,13 +1078,26 @@ if st.button("Homologar coordenadas"):
 centro = [-33.45, -70.66]
 
 try:
-    bounds = gdf_prc.total_bounds
-    centro = [
-        (bounds[1] + bounds[3]) / 2,
-        (bounds[0] + bounds[2]) / 2
-    ]
+    if not gdf_prc.empty:
+        bounds = gdf_prc.total_bounds
+
+        if not pd.isna(bounds).any():
+            centro = [
+                (bounds[1] + bounds[3]) / 2,
+                (bounds[0] + bounds[2]) / 2
+            ]
+
+    elif not gdf_prms_uso.empty:
+        bounds = gdf_prms_uso.total_bounds
+
+        if not pd.isna(bounds).any():
+            centro = [
+                (bounds[1] + bounds[3]) / 2,
+                (bounds[0] + bounds[2]) / 2
+            ]
+
 except:
-    pass
+    centro = [-33.45, -70.66]
 
 if st.session_state.lat and st.session_state.lon:
     centro = [
