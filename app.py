@@ -72,6 +72,42 @@ def tiene_info_normativa(fila):
 
     return False
 
+@st.cache_data
+def cargar_tabla_homologacion():
+    try:
+        return pd.read_csv("rules/homologacion_prc.csv")
+    except:
+        return pd.DataFrame()
+
+
+def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
+    tabla = cargar_tabla_homologacion()
+
+    if tabla.empty:
+        return None
+
+    comuna_norm = normalizar(comuna)
+    zona_norm = normalizar(zona_prc)
+    nombre_norm = normalizar(nombre_zona)
+
+    tabla = tabla.copy()
+    tabla["comuna_norm"] = tabla["comuna"].apply(normalizar)
+    tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar)
+    tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
+
+    match = tabla[
+        (tabla["comuna_norm"] == comuna_norm)
+        &
+        (
+            (tabla["zona_norm"] == zona_norm)
+            | (tabla["nombre_norm"] == nombre_norm)
+        )
+    ]
+
+    if match.empty:
+        return None
+
+    return match.iloc[0].to_dict()
 
 # =========================================================
 # LISTAR CAPAS
@@ -409,13 +445,31 @@ def homologar_por_tabla_sma491(categorias):
 
 
 def homologar_ds38(fila):
+    comuna = fila.get("COMUNA", "")
+    zona_prc = fila.get("ZONA", "")
+    nombre_zona = fila.get("NOMBRE", "")
+
+    regla = homologar_por_tabla_prc(
+        comuna,
+        zona_prc,
+        nombre_zona
+    )
+
+    if regla:
+        return (
+            regla["zona_ds38"],
+            f'{regla["limite_dia"]} dBA',
+            f'{regla["limite_noche"]} dBA',
+            regla["fundamento"],
+            regla["categorias"]
+        )
+
     categorias = detectar_categorias_oguc(fila)
     zona, dia, noche, criterio = homologar_por_tabla_sma491(categorias)
 
     categorias_texto = " + ".join(sorted(categorias)) if categorias else "No detectadas"
 
     return zona, dia, noche, criterio, categorias_texto
-
 
 # =========================================================
 # BÚSQUEDA ESPACIAL
@@ -638,7 +692,8 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.subheader("Criterio de homologación")
     st.write(criterio)
-
+if "PRC Santiago" in str(criterio):
+    st.info("Homologación aplicada desde tabla maestra PRC validada por ordenanza comunal.")
     advertencia_lu = ""
     if estado_lu == "Fuera de límite urbano PRMS / área rural":
         advertencia_lu = (
