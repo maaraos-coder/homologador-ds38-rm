@@ -13,6 +13,10 @@ st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
 st.subheader("Región Metropolitana - Motor PRC + PRMS + Límite Urbano")
+if st.button("Limpiar caché"):
+    st.cache_data.clear()
+    st.success("Caché eliminada correctamente.")
+    st.rerun()
 def listar_shapefiles_prms():
     shps = listar_shapefiles()
 
