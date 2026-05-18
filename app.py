@@ -283,7 +283,9 @@ def detectar_categorias_oguc(fila):
         or "habitacional mixta" in texto_norm
     ):
         return {"R", "Eq", "AP", "Inf"}
-    
+    git add .
+git commit -m "Optimización PRMS por comuna"
+git push
 
     if (
         "residencial" in texto_norm
@@ -686,11 +688,50 @@ gdf_prc["fuente_normativa"] = "PRC"
 capa_prms_lu = buscar_capa_prms_lu()
 capa_prms_uso = buscar_capa_prms_uso_suelo()
 
-gdf_prms_lu = cargar_shp(capa_prms_lu) if capa_prms_lu else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+# =========================================================
+# CARGA PRMS RECORTADO POR COMUNA
+# =========================================================
+
+# cargar capas completas
+
+gdf_prms_lu_total = (
+    cargar_shp(capa_prms_lu)
+    if capa_prms_lu
+    else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+)
+
+gdf_prms_uso_total = (
+    cargar_shp(capa_prms_uso)
+    if capa_prms_uso
+    else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+)
+
+# bbox comuna
+xmin, ymin, xmax, ymax = gdf_prc.total_bounds
+
+# recorte espacial PRMS_LU
+try:
+    gdf_prms_lu = gdf_prms_lu_total.cx[
+        xmin:xmax,
+        ymin:ymax
+    ].copy()
+except:
+    gdf_prms_lu = gdf_prms_lu_total.copy()
+
+# recorte espacial PRMS_USO
+try:
+    gdf_prms_uso = gdf_prms_uso_total.cx[
+        xmin:xmax,
+        ymin:ymax
+    ].copy()
+except:
+    gdf_prms_uso = gdf_prms_uso_total.copy()
+
+# normalizar columnas
+
 gdf_prms_lu = normalizar_columnas(gdf_prms_lu)
 gdf_prms_lu["fuente_normativa"] = "PRMS_LU"
 
-gdf_prms_uso = cargar_shp(capa_prms_uso) if capa_prms_uso else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
 gdf_prms_uso = normalizar_columnas(gdf_prms_uso)
 gdf_prms_uso["fuente_normativa"] = "PRMS_USO_Suelo"
 
