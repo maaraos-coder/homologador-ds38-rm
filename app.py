@@ -858,20 +858,7 @@ if "lon" not in st.session_state:
 # =========================================================
 
 indice = crear_indice_comunas()
-st.subheader("Comunas detectadas")
 
-comunas_detectadas = sorted([
-    indice[k]["nombre"]
-    for k in indice.keys()
-])
-
-st.write(f"Total comunas detectadas: {len(comunas_detectadas)}")
-
-st.dataframe(
-    pd.DataFrame({
-        "Comunas": comunas_detectadas
-    })
-)
 comunas_ordenadas = sorted(
     indice.keys(),
     key=lambda x: indice[x]["nombre"]
