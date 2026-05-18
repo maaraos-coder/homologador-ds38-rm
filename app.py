@@ -1026,22 +1026,7 @@ st.success(
 )
 
 
-# =========================================================
-# INSPECCIÓN CAPAS
-# =========================================================
 
-with st.expander("Ver capas usadas"):
-    st.write("PRC:")
-    st.write(comuna_info["archivo"])
-
-    st.write("PRMS_LU:")
-    st.write(capa_prms_lu)
-
-    st.write("PRMS_USO_Suelo:")
-    st.write(capa_prms_uso)
-
-    st.write("Columnas PRMS_USO_Suelo:")
-    st.write(list(gdf_prms_uso.columns))
 
 
 # =========================================================
