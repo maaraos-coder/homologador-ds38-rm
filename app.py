@@ -647,7 +647,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
             "y eventuales restricciones al desarrollo urbano."
         )
 
-       if resultado.empty:
+           if resultado.empty:
         st.warning("No se encontró homologación para el punto.")
         return
 
