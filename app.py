@@ -12,7 +12,13 @@ from geopy.geocoders import Nominatim
 st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
-st.subheader("Región Metropolitana - Homologación Res. Ex. SMA N°491/2016")
+st.subheader("Región Metropolitana - Motor PRC + PRMS")
+
+st.warning(
+    "Herramienta de apoyo técnico para homologación preliminar de zonas DS38/11 MMA. "
+    "El resultado debe ser verificado con el Instrumento de Planificación Territorial vigente, "
+    "la cartografía oficial y la Res. Ex. SMA N°491/2016 antes de su uso formal."
+)
 
 ZIP_PATH = "data/IPTMetropolitana.zip"
 
@@ -31,15 +37,39 @@ def normalizar(texto):
     return texto.strip()
 
 
+def texto_atributos(fila):
+    valores = []
+
+    for col in fila.index:
+        if col == "geometry":
+            continue
+        try:
+            valores.append(str(fila.get(col, "")))
+        except:
+            pass
+
+    return normalizar(" ".join(valores))
+
+
+# =========================================================
+# LISTAR CAPAS
+# =========================================================
+
 @st.cache_data
-def listar_shapefiles_prc():
+def listar_shapefiles():
     with zipfile.ZipFile(ZIP_PATH, "r") as z:
         archivos = z.namelist()
 
+    return [a for a in archivos if a.endswith(".shp")]
+
+
+@st.cache_data
+def listar_shapefiles_prc():
+    shps = listar_shapefiles()
+
     shp_prc = [
-        a for a in archivos
-        if a.endswith(".shp")
-        and "/PRC/" in a
+        a for a in shps
+        if "/PRC/" in a
         and "Patrimonio" not in a
         and "ZNE" not in a
         and "poligono" not in a
@@ -49,6 +79,27 @@ def listar_shapefiles_prc():
 
     return shp_prc
 
+
+@st.cache_data
+def listar_shapefiles_prms():
+    shps = listar_shapefiles()
+
+    shp_prms = [
+        a for a in shps
+        if "/PRMS/" in a
+        and (
+            "USO_Suelo" in a
+            or "LU" in a
+            or "Rural" in a
+        )
+    ]
+
+    return shp_prms
+
+
+# =========================================================
+# ÍNDICE COMUNAS
+# =========================================================
 
 @st.cache_data
 def crear_indice_comunas():
@@ -73,8 +124,12 @@ def crear_indice_comunas():
     return indice
 
 
+# =========================================================
+# CARGA CAPAS
+# =========================================================
+
 @st.cache_data
-def cargar_comuna(shp):
+def cargar_shp(shp):
     ruta = f"zip://{ZIP_PATH}!{shp}"
 
     gdf = gpd.read_file(ruta)
@@ -84,12 +139,39 @@ def cargar_comuna(shp):
     return gdf
 
 
+@st.cache_data
+def cargar_prms():
+    capas = []
+
+    for shp in listar_shapefiles_prms():
+        try:
+            gdf = cargar_shp(shp)
+            gdf["fuente_normativa"] = "PRMS"
+            capas.append(gdf)
+        except:
+            pass
+
+    if capas:
+        gdf_total = pd.concat(capas, ignore_index=True)
+        gdf_total = gpd.GeoDataFrame(gdf_total, geometry="geometry", crs="EPSG:4326")
+        return gdf_total
+
+    return gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+
+
 def normalizar_columnas(gdf):
     renombres = {
         "COM": "COMUNA",
         "NOM": "NOMBRE",
+        "NOMBRE_ZON": "NOMBRE",
+        "NOM_ZONA": "NOMBRE",
         "N_DOC": "DECRETO",
-        "P_DO": "PLANO"
+        "P_DO": "PLANO",
+        "COD_ZONA": "ZONA",
+        "ZONIF": "ZONA",
+        "USO": "UPERM",
+        "USO_SUELO": "UPERM",
+        "DESTINO": "UPERM"
     }
 
     gdf = gdf.rename(columns=renombres)
@@ -103,7 +185,9 @@ def normalizar_columnas(gdf):
         "UPROH",
         "SUELO",
         "DECRETO",
-        "PLANO"
+        "PLANO",
+        "fuente_normativa",
+        "archivo_origen"
     ]
 
     for col in columnas_necesarias:
@@ -114,7 +198,7 @@ def normalizar_columnas(gdf):
 
 
 # =========================================================
-# HOMOLOGACIÓN RES. EX. SMA 491/2016
+# HOMOLOGACIÓN SMA 491
 # =========================================================
 
 def detectar_categorias_oguc(fila):
@@ -124,6 +208,7 @@ def detectar_categorias_oguc(fila):
         str(fila.get("SUELO", "")),
         str(fila.get("NOMBRE", "")),
         str(fila.get("ZONA", "")),
+        texto_atributos(fila)
     ])
 
     texto_norm = normalizar(texto)
@@ -135,6 +220,7 @@ def detectar_categorias_oguc(fila):
         "residencial" in texto_norm
         or "vivienda" in texto_norm
         or "habitacional" in texto_norm
+        or "habitacionales" in texto_norm
     ):
         categorias.add("R")
 
@@ -153,23 +239,25 @@ def detectar_categorias_oguc(fila):
         or "social" in texto_norm
         or "esparcimiento" in texto_norm
         or "cientifico" in texto_norm
+        or "metropolitano" in texto_norm
+        or "intercomunal" in texto_norm
     ):
         categorias.add("Eq")
 
-    # AP = Actividades Productivas
+    # AP = Actividad Productiva
     if (
         "actividad productiva" in texto_norm
         or "actividades productivas" in texto_norm
         or "industrial" in texto_norm
         or "industria" in texto_norm
+        or "molesta" in texto_norm
+        or "inofensiva" in texto_norm
         or "taller" in texto_norm
         or "bodega" in texto_norm
         or "almacenamiento" in texto_norm
-        or "inofensiva" in texto_norm
-        or "molesta" in texto_norm
-        or "insalubre" in texto_norm
-        or "contaminante" in texto_norm
-        or "peligrosa" in texto_norm
+        or "productivas" in texto_norm
+        or "productiva" in texto_norm
+        or "servicio de caracter industrial" in texto_norm
     ):
         categorias.add("AP")
 
@@ -186,6 +274,7 @@ def detectar_categorias_oguc(fila):
         or "estacion" in texto_norm
         or "subestacion" in texto_norm
         or "planta" in texto_norm
+        or "macroinfraestructura" in texto_norm
     ):
         categorias.add("Inf")
 
@@ -195,6 +284,7 @@ def detectar_categorias_oguc(fila):
         or "areas verdes" in texto_norm
         or "parque" in texto_norm
         or "plaza" in texto_norm
+        or "recreacion" in texto_norm
     ):
         categorias.add("AV")
 
@@ -213,11 +303,7 @@ def detectar_categorias_oguc(fila):
 def homologar_por_tabla_sma491(categorias):
     cats = set(categorias)
 
-    if cats in [
-        {"AV"},
-        {"EP"},
-        {"AV", "EP"}
-    ]:
+    if cats in [{"AV"}, {"EP"}, {"AV", "EP"}]:
         return "Zona I", "55 dBA", "45 dBA", "AV/EP solos o combinados entre sí se homologan a Zona I."
 
     if (
@@ -249,17 +335,16 @@ def homologar_ds38(fila):
 
 
 # =========================================================
-# CRUCE ESPACIAL CON TOLERANCIA
+# BÚSQUEDA ESPACIAL
 # =========================================================
 
-def buscar_punto(lat, lon, gdf, tolerancia_m=50):
+def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
     punto = gpd.GeoDataFrame(
         {"id": [1]},
         geometry=[Point(lon, lat)],
         crs="EPSG:4326"
     )
 
-    # 1. Búsqueda exacta dentro/intersección del polígono
     resultado = gpd.sjoin(
         punto,
         gdf,
@@ -267,19 +352,25 @@ def buscar_punto(lat, lon, gdf, tolerancia_m=50):
         predicate="intersects"
     )
 
-    if not resultado.empty and not pd.isna(resultado.iloc[0].get("ZONA")):
-        resultado["metodo_busqueda"] = "Dentro del polígono"
-        resultado["distancia_m"] = 0
+    if not resultado.empty:
+        fila = resultado.iloc[0]
+
+        if not pd.isna(fila.get("index_right")):
+            resultado["metodo_busqueda"] = "Dentro del polígono"
+            resultado["distancia_m"] = 0
+            return resultado
+
+    if tolerancia_m == 0:
+        resultado["metodo_busqueda"] = "Sin coincidencia"
+        resultado["distancia_m"] = None
         return resultado
 
-    # 2. Búsqueda por tolerancia espacial en metros
     try:
         punto_m = punto.to_crs(epsg=32719)
-        gdf_m = gdf.to_crs(epsg=32719)
+        gdf_m = gdf.to_crs(epsg=32719).copy()
 
         punto_geom = punto_m.geometry.iloc[0]
 
-        gdf_m = gdf_m.copy()
         gdf_m["distancia_m"] = gdf_m.geometry.distance(punto_geom)
 
         cercanos = gdf_m[gdf_m["distancia_m"] <= tolerancia_m].copy()
@@ -305,40 +396,60 @@ def buscar_punto(lat, lon, gdf, tolerancia_m=50):
         return resultado
 
 
+def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
+    # 1. Buscar primero en PRC
+    resultado_prc = buscar_punto_en_capa(lat, lon, gdf_prc, tolerancia_m)
+
+    if not resultado_prc.empty and not pd.isna(resultado_prc.iloc[0].get("ZONA")):
+        resultado_prc["fuente_normativa"] = "PRC"
+        return resultado_prc
+
+    # 2. Si no encuentra, buscar en PRMS
+    resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
+
+    if not resultado_prms.empty:
+        resultado_prms["fuente_normativa"] = "PRMS"
+        return resultado_prms
+
+    return resultado_prc
+
+
 # =========================================================
 # RESULTADO
 # =========================================================
 
-def mostrar_resultado(lat, lon, gdf, tolerancia_m):
-    resultado = buscar_punto(lat, lon, gdf, tolerancia_m)
+def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
+    resultado = buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m)
 
     st.subheader("Resultado de homologación")
 
-    if resultado.empty or pd.isna(resultado.iloc[0].get("ZONA")):
-        st.warning("No se encontró homologación para el punto en la comuna seleccionada.")
+    if resultado.empty:
+        st.warning("No se encontró homologación para el punto.")
         return
 
     fila = resultado.iloc[0]
 
+    zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(fila)
+
     metodo = fila.get("metodo_busqueda", "")
     distancia = fila.get("distancia_m", "")
+    fuente = fila.get("fuente_normativa", "")
 
     if metodo == "Por tolerancia espacial":
         st.warning(
             f"El punto no cayó exactamente dentro del polígono. "
-            f"Se homologó usando el polígono más cercano a {distancia} m."
+            f"Se usó el polígono más cercano a {distancia} m."
         )
     else:
-        st.success("Punto ubicado dentro de zona PRC/IPT")
-
-    zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(fila)
+        st.success("Punto ubicado dentro de una capa IPT.")
 
     col1, col2 = st.columns(2)
 
     with col1:
         st.write("**Coordenadas:**", lat, lon)
+        st.write("**Fuente normativa:**", fuente)
         st.write("**Comuna:**", fila.get("COMUNA", ""))
-        st.write("**Zona PRC:**", fila.get("ZONA", ""))
+        st.write("**Zona IPT:**", fila.get("ZONA", ""))
         st.write("**Nombre zona:**", fila.get("NOMBRE", ""))
         st.write("**Suelo:**", fila.get("SUELO", ""))
         st.write("**Método de búsqueda:**", metodo)
@@ -351,11 +462,12 @@ def mostrar_resultado(lat, lon, gdf, tolerancia_m):
         st.write("**Límite nocturno:**", limite_noche)
         st.write("**Decreto:**", fila.get("DECRETO", ""))
         st.write("**Plano:**", fila.get("PLANO", ""))
+        st.write("**Archivo origen:**", fila.get("archivo_origen", ""))
 
     st.write("**Usos preferentes:**")
     st.write(fila.get("UPREF", ""))
 
-    st.write("**Usos permitidos:**")
+    st.write("**Usos permitidos / atributos de uso:**")
     st.write(fila.get("UPERM", ""))
 
     st.write("**Usos prohibidos:**")
@@ -373,13 +485,16 @@ def mostrar_resultado(lat, lon, gdf, tolerancia_m):
         )
 
     texto = f"""
-Para el punto consultado, ubicado en la comuna de {fila.get("COMUNA", "")}, se identifica la zona PRC/IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}. De acuerdo con los usos de suelo informados en la cartografía IPT revisada, se identifican las siguientes categorías de uso de suelo para efectos de homologación acústica: {categorias}.
+Para el punto consultado, se identifica información territorial proveniente de {fuente}, correspondiente a la zona IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}. De acuerdo con los atributos de uso de suelo de la cartografía revisada, se identifican las siguientes categorías para efectos de homologación acústica: {categorias}.
 
 Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia}
 """
 
     st.subheader("Texto técnico preliminar")
-    st.text_area("Redacción", texto.strip(), height=220)
+    st.text_area("Redacción", texto.strip(), height=230)
+
+    with st.expander("Ver todos los atributos de la capa"):
+        st.write(pd.DataFrame([fila.drop(labels=["geometry"], errors="ignore")]))
 
 
 # =========================================================
@@ -394,7 +509,7 @@ if "lon" not in st.session_state:
 
 
 # =========================================================
-# COMUNAS
+# SELECTOR COMUNA
 # =========================================================
 
 indice = crear_indice_comunas()
@@ -414,12 +529,30 @@ comuna_clave = st.selectbox(
 
 comuna_info = indice[comuna_clave]
 
-gdf = cargar_comuna(comuna_info["archivo"])
-gdf = normalizar_columnas(gdf)
+gdf_prc = cargar_shp(comuna_info["archivo"])
+gdf_prc = normalizar_columnas(gdf_prc)
+gdf_prc["fuente_normativa"] = "PRC"
+
+gdf_prms = cargar_prms()
+gdf_prms = normalizar_columnas(gdf_prms)
+gdf_prms["fuente_normativa"] = "PRMS"
 
 st.success(
-    f"Comuna cargada: {comuna_info['nombre']} | Polígonos: {len(gdf)}"
+    f"PRC cargado: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | Polígonos PRMS: {len(gdf_prms)}"
 )
+
+
+# =========================================================
+# INSPECCIÓN DE CAPAS
+# =========================================================
+
+with st.expander("Ver capas disponibles dentro del ZIP"):
+    st.write("Capas PRC:")
+    st.write(listar_shapefiles_prc())
+
+    st.write("Capas PRMS usadas:")
+    st.write(listar_shapefiles_prms())
+
 
 # =========================================================
 # TOLERANCIA
@@ -458,36 +591,28 @@ if st.button("Buscar dirección y homologar"):
         consulta = f"{direccion}, {comuna_info['nombre']}, Chile"
 
     try:
-
         with st.spinner("Buscando dirección..."):
-
             location = geolocator.geocode(
                 consulta,
                 timeout=10
             )
 
         if location:
-
             st.session_state.lat = location.latitude
             st.session_state.lon = location.longitude
-
             st.success("Dirección encontrada")
 
         else:
-
             st.error(
                 "No se encontró la dirección. "
-                "Prueba agregando comuna y país."
+                "Prueba agregando comuna y país, o selecciona el punto en el mapa."
             )
 
     except Exception as e:
-
         st.warning(
             "El servicio de búsqueda de direcciones no respondió correctamente. "
-            "Puedes seleccionar el punto directamente en el mapa "
-            "o ingresar coordenadas manualmente."
+            "Puedes seleccionar el punto directamente en el mapa o ingresar coordenadas manualmente."
         )
-
         st.caption(f"Detalle técnico: {e}")
 
 
@@ -500,7 +625,6 @@ st.subheader("Ingresar coordenadas manualmente")
 col_lat, col_lon = st.columns(2)
 
 with col_lat:
-
     lat_manual = st.number_input(
         "Latitud",
         value=-33.45,
@@ -508,7 +632,6 @@ with col_lat:
     )
 
 with col_lon:
-
     lon_manual = st.number_input(
         "Longitud",
         value=-70.66,
@@ -516,11 +639,10 @@ with col_lon:
     )
 
 if st.button("Homologar coordenadas"):
-
     st.session_state.lat = lat_manual
     st.session_state.lon = lon_manual
-
     st.success("Coordenadas cargadas correctamente")
+
 
 # =========================================================
 # MAPA
@@ -529,13 +651,11 @@ if st.button("Homologar coordenadas"):
 centro = [-33.45, -70.66]
 
 try:
-    bounds = gdf.total_bounds
-
+    bounds = gdf_prc.total_bounds
     centro = [
         (bounds[1] + bounds[3]) / 2,
         (bounds[0] + bounds[2]) / 2
     ]
-
 except:
     pass
 
@@ -550,15 +670,39 @@ m = folium.Map(
     zoom_start=13
 )
 
-gdf_mapa = gdf.copy()
+# PRMS base, más liviano
+try:
+    gdf_prms_mapa = gdf_prms.copy()
+    gdf_prms_mapa["geometry"] = gdf_prms_mapa.geometry.simplify(
+        0.0008,
+        preserve_topology=True
+    )
 
-gdf_mapa["geometry"] = gdf_mapa.geometry.simplify(
+    folium.GeoJson(
+        gdf_prms_mapa,
+        name="PRMS",
+        style_function=lambda x: {
+            "fillOpacity": 0.05,
+            "weight": 1
+        },
+        tooltip=folium.GeoJsonTooltip(
+            fields=["ZONA", "NOMBRE"],
+            aliases=["Zona PRMS", "Nombre"]
+        )
+    ).add_to(m)
+
+except:
+    pass
+
+# PRC comuna seleccionada
+gdf_prc_mapa = gdf_prc.copy()
+gdf_prc_mapa["geometry"] = gdf_prc_mapa.geometry.simplify(
     0.0003,
     preserve_topology=True
 )
 
 folium.GeoJson(
-    gdf_mapa,
+    gdf_prc_mapa,
     name=f"PRC {comuna_info['nombre']}",
     tooltip=folium.GeoJsonTooltip(
         fields=["COMUNA", "ZONA", "NOMBRE"],
@@ -575,6 +719,8 @@ if st.session_state.lat and st.session_state.lon:
         popup="Punto seleccionado",
         icon=folium.Icon(color="red")
     ).add_to(m)
+
+folium.LayerControl().add_to(m)
 
 map_data = st_folium(
     m,
@@ -600,6 +746,7 @@ if st.session_state.lat and st.session_state.lon:
     mostrar_resultado(
         st.session_state.lat,
         st.session_state.lon,
-        gdf,
+        gdf_prc,
+        gdf_prms,
         tolerancia_m
     )
