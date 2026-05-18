@@ -12,7 +12,7 @@ from geopy.geocoders import Nominatim
 st.set_page_config(page_title="Homologador DS38 RM", layout="wide")
 
 st.title("Homologador DS38/11 MMA")
-st.subheader("Región Metropolitana - Motor PRC + PRMS")
+st.subheader("Región Metropolitana - Motor PRC + PRMS optimizado por comuna")
 
 if st.button("Limpiar caché"):
     st.cache_data.clear()
@@ -44,6 +44,7 @@ def normalizar(texto):
 
 def texto_atributos(fila):
     valores = []
+
     for col in fila.index:
         if col == "geometry":
             continue
@@ -51,6 +52,7 @@ def texto_atributos(fila):
             valores.append(str(fila.get(col, "")))
         except:
             pass
+
     return normalizar(" ".join(valores))
 
 
@@ -61,8 +63,10 @@ def tiene_info_normativa(fila):
 
     if zona and zona.lower() != "nan":
         return True
+
     if nombre and nombre.lower() != "nan":
         return True
+
     if usos and usos.lower() != "nan":
         return True
 
@@ -77,12 +81,14 @@ def tiene_info_normativa(fila):
 def listar_shapefiles():
     with zipfile.ZipFile(ZIP_PATH, "r") as z:
         archivos = z.namelist()
+
     return [a for a in archivos if a.endswith(".shp")]
 
 
 @st.cache_data
 def listar_shapefiles_prc():
     shps = listar_shapefiles()
+
     return [
         a for a in shps
         if "/PRC/" in a
@@ -97,6 +103,7 @@ def listar_shapefiles_prc():
 @st.cache_data
 def buscar_capa_prms_lu():
     shps = listar_shapefiles()
+
     candidatos = [
         a for a in shps
         if "/PRMS/" in a
@@ -120,6 +127,7 @@ def buscar_capa_prms_lu():
 @st.cache_data
 def buscar_capa_prms_uso_suelo():
     shps = listar_shapefiles()
+
     candidatos = [
         a for a in shps
         if "/PRMS/" in a
@@ -174,9 +182,11 @@ def crear_indice_comunas():
 @st.cache_data
 def cargar_shp(shp):
     ruta = f"zip://{ZIP_PATH}!{shp}"
+
     gdf = gpd.read_file(ruta)
     gdf = gdf.to_crs(epsg=4326)
     gdf["archivo_origen"] = shp
+
     return gdf
 
 
@@ -273,9 +283,13 @@ def detectar_categorias_oguc(fila):
 
     categorias = set()
 
-    # Regla específica PRMS: Zona Habitacional Mixta
-    # Art. 3.1.1.1 PRMS: permite residencial, equipamiento,
-    # actividades productivas/almacenamiento inofensivo e infraestructura/transporte.
+    # =========================================================
+    # REGLA ESPECÍFICA PRMS
+    # Zona Habitacional Mixta
+    # Art. 3.1.1.1 PRMS:
+    # Residencial + Equipamiento + Productiva inofensiva + Infraestructura/Transporte
+    # =========================================================
+
     if (
         "zona habitacional mixto" in texto_norm
         or "zona habitacional mixta" in texto_norm
@@ -283,19 +297,17 @@ def detectar_categorias_oguc(fila):
         or "habitacional mixta" in texto_norm
     ):
         return {"R", "Eq", "AP", "Inf"}
-    git add .
-git commit -m "Optimización PRMS por comuna"
-git push
 
+    # R = Residencial
     if (
         "residencial" in texto_norm
         or "vivienda" in texto_norm
         or "habitacional" in texto_norm
         or "habitacionales" in texto_norm
-        or "habitacional mixto" in texto_norm
     ):
         categorias.add("R")
 
+    # Eq = Equipamiento
     if (
         "equipamiento" in texto_norm
         or "comercio" in texto_norm
@@ -305,9 +317,6 @@ git push
         or "cultura" in texto_norm
         or "deporte" in texto_norm
         or "seguridad" in texto_norm
-        or "servicio" in texto_norm
-        or "servicios" in texto_norm
-        or "social" in texto_norm
         or "esparcimiento" in texto_norm
         or "cientifico" in texto_norm
         or "metropolitano" in texto_norm
@@ -315,6 +324,7 @@ git push
     ):
         categorias.add("Eq")
 
+    # AP = Actividad Productiva
     if (
         "actividad productiva" in texto_norm
         or "actividades productivas" in texto_norm
@@ -333,6 +343,7 @@ git push
     ):
         categorias.add("AP")
 
+    # Inf = Infraestructura
     if (
         "infraestructura" in texto_norm
         or "transporte" in texto_norm
@@ -349,6 +360,7 @@ git push
     ):
         categorias.add("Inf")
 
+    # AV = Área Verde
     if (
         "area verde" in texto_norm
         or "areas verdes" in texto_norm
@@ -358,6 +370,7 @@ git push
     ):
         categorias.add("AV")
 
+    # EP = Espacio Público
     if (
         "espacio publico" in texto_norm
         or "espacios publicos" in texto_norm
@@ -398,7 +411,9 @@ def homologar_por_tabla_sma491(categorias):
 def homologar_ds38(fila):
     categorias = detectar_categorias_oguc(fila)
     zona, dia, noche, criterio = homologar_por_tabla_sma491(categorias)
+
     categorias_texto = " + ".join(sorted(categorias)) if categorias else "No detectadas"
+
     return zona, dia, noche, criterio, categorias_texto
 
 
@@ -438,6 +453,7 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         gdf_m = gdf.to_crs(epsg=32719).copy()
 
         punto_geom = punto_m.geometry.iloc[0]
+
         gdf_m["distancia_m"] = gdf_m.geometry.distance(punto_geom)
 
         cercanos = gdf_m[gdf_m["distancia_m"] <= tolerancia_m].copy()
@@ -491,6 +507,7 @@ def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m):
         fila_prc = resultado_prc.iloc[0]
 
         if tiene_info_normativa(fila_prc):
+
             if debe_revisar_prms(fila_prc):
                 resultado_prms = buscar_punto_en_capa(
                     lat,
@@ -547,7 +564,13 @@ def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m):
 def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m):
     estado_lu, detalle_lu = detectar_limite_urbano_prms(lat, lon, gdf_prms_lu)
 
-    resultado = buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m)
+    resultado = buscar_jerarquico(
+        lat,
+        lon,
+        gdf_prc,
+        gdf_prms_uso,
+        tolerancia_m
+    )
 
     st.subheader("Resultado de homologación")
 
@@ -688,12 +711,6 @@ gdf_prc["fuente_normativa"] = "PRC"
 capa_prms_lu = buscar_capa_prms_lu()
 capa_prms_uso = buscar_capa_prms_uso_suelo()
 
-# =========================================================
-# CARGA PRMS RECORTADO POR COMUNA
-# =========================================================
-
-# cargar capas completas
-
 gdf_prms_lu_total = (
     cargar_shp(capa_prms_lu)
     if capa_prms_lu
@@ -706,10 +723,12 @@ gdf_prms_uso_total = (
     else gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
 )
 
-# bbox comuna
+# =========================================================
+# RECORTE PRMS POR COMUNA
+# =========================================================
+
 xmin, ymin, xmax, ymax = gdf_prc.total_bounds
 
-# recorte espacial PRMS_LU
 try:
     gdf_prms_lu = gdf_prms_lu_total.cx[
         xmin:xmax,
@@ -718,7 +737,6 @@ try:
 except:
     gdf_prms_lu = gdf_prms_lu_total.copy()
 
-# recorte espacial PRMS_USO
 try:
     gdf_prms_uso = gdf_prms_uso_total.cx[
         xmin:xmax,
@@ -726,8 +744,6 @@ try:
     ].copy()
 except:
     gdf_prms_uso = gdf_prms_uso_total.copy()
-
-# normalizar columnas
 
 gdf_prms_lu = normalizar_columnas(gdf_prms_lu)
 gdf_prms_lu["fuente_normativa"] = "PRMS_LU"
@@ -737,7 +753,7 @@ gdf_prms_uso["fuente_normativa"] = "PRMS_USO_Suelo"
 
 st.success(
     f"PRC cargado: {comuna_info['nombre']} | Polígonos PRC: {len(gdf_prc)} | "
-    f"PRMS_LU: {len(gdf_prms_lu)} | PRMS_USO_Suelo: {len(gdf_prms_uso)}"
+    f"PRMS_LU comuna: {len(gdf_prms_lu)} | PRMS_USO_Suelo comuna: {len(gdf_prms_uso)}"
 )
 
 
