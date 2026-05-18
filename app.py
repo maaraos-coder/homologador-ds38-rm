@@ -273,6 +273,18 @@ def detectar_categorias_oguc(fila):
 
     categorias = set()
 
+    # Regla específica PRMS: Zona Habitacional Mixta
+    # Art. 3.1.1.1 PRMS: permite residencial, equipamiento,
+    # actividades productivas/almacenamiento inofensivo e infraestructura/transporte.
+    if (
+        "zona habitacional mixto" in texto_norm
+        or "zona habitacional mixta" in texto_norm
+        or "habitacional mixto" in texto_norm
+        or "habitacional mixta" in texto_norm
+    ):
+        return {"R", "Eq", "AP", "Inf"}
+    
+
     if (
         "residencial" in texto_norm
         or "vivienda" in texto_norm
