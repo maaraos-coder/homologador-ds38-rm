@@ -211,7 +211,8 @@ def normalizar_columnas(gdf):
         "DECRETO",
         "PLANO",
         "fuente_normativa",
-        "archivo_origen"
+        "archivo_origen",
+        "observacion_jerarquia"
     ]
 
     for col in columnas_necesarias:
@@ -446,17 +447,68 @@ def buscar_punto_en_capa(lat, lon, gdf, tolerancia_m=50):
         return resultado
 
 
+def debe_revisar_prms(fila):
+    texto = texto_atributos(fila)
+
+    claves = [
+        "revisar prms",
+        "ver prms",
+        "segun prms",
+        "según prms",
+        "aplica prms",
+        "remitase prms",
+        "remítase prms",
+        "remitirse prms",
+        "normativa prms",
+        "prms"
+    ]
+
+    return any(clave in texto for clave in claves)
+
+
 def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms, tolerancia_m):
+
     resultado_prc = buscar_punto_en_capa(lat, lon, gdf_prc, tolerancia_m)
 
     if not resultado_prc.empty and not pd.isna(resultado_prc.iloc[0].get("ZONA")):
+
+        fila_prc = resultado_prc.iloc[0]
+
+        if debe_revisar_prms(fila_prc):
+
+            resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
+
+            if not resultado_prms.empty and not pd.isna(resultado_prms.iloc[0].get("ZONA")):
+
+                resultado_prms["fuente_normativa"] = "PRMS"
+                resultado_prms["observacion_jerarquia"] = (
+                    "El PRC contiene una referencia a revisión del PRMS; "
+                    "por ello se utilizó la capa PRMS para complementar la homologación."
+                )
+
+                return resultado_prms
+
+            resultado_prc["fuente_normativa"] = "PRC"
+            resultado_prc["observacion_jerarquia"] = (
+                "El PRC indica revisar PRMS, pero no se encontró coincidencia PRMS para el punto consultado."
+            )
+
+            return resultado_prc
+
         resultado_prc["fuente_normativa"] = "PRC"
+        resultado_prc["observacion_jerarquia"] = "Se utilizó la zonificación del PRC comunal."
+
         return resultado_prc
 
     resultado_prms = buscar_punto_en_capa(lat, lon, gdf_prms, tolerancia_m)
 
-    if not resultado_prms.empty:
+    if not resultado_prms.empty and not pd.isna(resultado_prms.iloc[0].get("ZONA")):
+
         resultado_prms["fuente_normativa"] = "PRMS"
+        resultado_prms["observacion_jerarquia"] = (
+            "No se encontró PRC aplicable para el punto; se utilizó PRMS."
+        )
+
         return resultado_prms
 
     return resultado_prc
@@ -494,6 +546,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
     metodo = fila.get("metodo_busqueda", "")
     distancia = fila.get("distancia_m", "")
     fuente = fila.get("fuente_normativa", "")
+    observacion_jerarquia = fila.get("observacion_jerarquia", "")
 
     if metodo == "Por tolerancia espacial":
         st.warning(
@@ -508,6 +561,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
     with col1:
         st.write("**Coordenadas:**", lat, lon)
         st.write("**Fuente normativa:**", fuente)
+        st.write("**Observación jerárquica:**", observacion_jerarquia)
         st.write("**Comuna:**", fila.get("COMUNA", ""))
         st.write("**Zona IPT:**", fila.get("ZONA", ""))
         st.write("**Nombre zona:**", fila.get("NOMBRE", ""))
@@ -552,10 +606,14 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms, gdf_lu, tolerancia_m):
             f"identificándose el polígono más cercano a {distancia} m."
         )
 
+    advertencia_jerarquia = ""
+    if observacion_jerarquia:
+        advertencia_jerarquia = f" {observacion_jerarquia}"
+
     texto = f"""
 Para el punto consultado, se identifica información territorial proveniente de {fuente}, correspondiente a la zona IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}. De acuerdo con los atributos de uso de suelo de la cartografía revisada, se identifican las siguientes categorías para efectos de homologación acústica: {categorias}.
 
-El punto presenta la siguiente clasificación territorial según la capa de límite urbano: {estado_lu}. Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_lu}{advertencia_tol}
+El punto presenta la siguiente clasificación territorial según la capa de límite urbano: {estado_lu}. Conforme a los criterios establecidos en la Resolución Exenta N°491/2016 de la Superintendencia del Medio Ambiente, la zona se homologa preliminarmente como {zona_ds38} del D.S. N°38/2011 del MMA, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_jerarquia}{advertencia_lu}{advertencia_tol}
 """
 
     st.subheader("Texto técnico preliminar")
