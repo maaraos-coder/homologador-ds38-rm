@@ -6,3 +6,4 @@ streamlit-folium
 shapely
 geopy
 pyogrio
+openpyxl
