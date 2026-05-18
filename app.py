@@ -750,3 +750,18 @@ if st.session_state.lat and st.session_state.lon:
         gdf_prms,
         tolerancia_m
     )
+with st.expander("Ver capas dentro de NACLU"):
+    try:
+        with zipfile.ZipFile("data/02.NACLU.zip", "r") as z:
+            archivos_naclu = z.namelist()
+
+        shps_naclu = [a for a in archivos_naclu if a.endswith(".shp")]
+
+        st.write(shps_naclu)
+
+    except Exception as e:
+        st.error("No pude leer 02.NACLU.zip")
+        st.write(e)
+
+
+
