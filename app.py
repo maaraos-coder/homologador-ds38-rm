@@ -871,7 +871,14 @@ comuna_clave = st.selectbox(
     comunas_ordenadas,
     format_func=lambda x: indice[x]["nombre"]
 )
+if "comuna_actual" not in st.session_state:
+    st.session_state.comuna_actual = comuna_clave
 
+if st.session_state.comuna_actual != comuna_clave:
+    st.session_state.lat = None
+    st.session_state.lon = None
+    st.session_state.comuna_actual = comuna_clave
+    
 comuna_info = indice[comuna_clave]
 
 if comuna_info["archivo"]:
@@ -1128,7 +1135,7 @@ except:
 # SI EXISTE PUNTO CONSULTADO
 # =========================================================
 
-if st.session_state.lat and st.session_state.lon:
+if st.session_state.lat is not None and st.session_state.lon is not None:
 
     centro = [
         st.session_state.lat,
