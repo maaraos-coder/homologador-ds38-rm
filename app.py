@@ -692,8 +692,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.subheader("Criterio de homologación")
     st.write(criterio)
-if "PRC Santiago" in str(criterio):
-    st.info("Homologación aplicada desde tabla maestra PRC validada por ordenanza comunal.")
+
     advertencia_lu = ""
     if estado_lu == "Fuera de límite urbano PRMS / área rural":
         advertencia_lu = (
@@ -725,7 +724,9 @@ El punto presenta la siguiente clasificación territorial según la capa PRMS_LU
 
     with st.expander("Ver todos los atributos de la capa"):
         st.write(pd.DataFrame([fila.drop(labels=["geometry"], errors="ignore")]))
-
+        
+if "PRC Santiago" in str(criterio):
+    st.info("Homologación aplicada desde tabla maestra PRC validada por ordenanza comunal.")
 
 # =========================================================
 # SESSION STATE
