@@ -1,0 +1,8 @@
+﻿comuna,zona_prc,nombre_zona,categorias,zona_ds38,limite_dia,limite_noche,fundamento
+Santiago,Zona A,Zona A,R+Eq+AP+Inf+EP+AV,Zona III,65,50,"PRC Santiago Art. 30 Zona A: permite residencial, equipamiento, taller artesanal, infraestructura de transporte/sanitaria, espacio público y área verde."
+Santiago,Zona B,Zona B,R+Eq+AP+Inf+EP+AV,Zona III,65,50,"PRC Santiago Art. 30 Zona B: usos mixtos con presencia residencial, equipamiento y actividades productivas."
+Santiago,Zona D,Zona D,R+Eq+AP+Inf+EP+AV,Zona III,65,50,"PRC Santiago Art. 30 Zona D: usos mixtos con presencia residencial, equipamiento y actividades productivas."
+Santiago,Zona E,Zona E,R+Eq+AP+Inf+EP+AV,Zona III,65,50,"PRC Santiago Art. 30 Zona E: usos mixtos con presencia residencial, equipamiento y actividades productivas."
+Santiago,Zona F,Zona F,Eq+EP+AV,Zona II,60,45,"PRC Santiago Zona F: equipamiento cultural/deportivo, espacio público y áreas verdes."
+Santiago,Zona G,Zona G,EP+AV,Zona I,55,45,PRC Santiago Zona G: espacio público y áreas verdes.
+Santiago,Zona H,Zona H,AV+Eq,Zona II,60,45,PRC Santiago Zona H remite a PRMS art. 5.2.4.1.
