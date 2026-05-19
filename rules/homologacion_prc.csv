@@ -13,4 +13,35 @@ Providencia,UpR y E,Uso preferentemente Residencial y de Equipamiento,R + Eq + A
 Providencia,UpR y ECr,Uso preferentemente Residencial y Equipamiento de Comercio restringido,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite actividades productivas e infraestructura.
 Providencia,UpEC,Uso preferentemente de Equipamiento Comercial,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite actividades productivas.
 Providencia,UpAP e Ir,Uso preferentemente de Actividades Productivas e Industria restringida,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite residencia equipamiento actividades productivas e infraestructura.
-
+Las Condes,UV/EAm1,UV/EAm1 Zona de Uso de Vivienda,R+Eq,Zona II,60,45,PRC Las Condes: zona residencial con equipamiento compatible.
+Las Condes,UV/EAm2,UV/EAm2 Zona de Uso de Vivienda,R+Eq,Zona II,60,45,PRC Las Condes: zona residencial con equipamiento compatible.
+Las Condes,UV/EAm3,UV/EAm3 Zona de Uso de Vivienda,R+Eq,Zona II,60,45,PRC Las Condes: zona residencial con equipamiento compatible.
+Las Condes,UV/EAm4,UV/EAm4 Zona de Uso de Vivienda,R+Eq,Zona II,60,45,PRC Las Condes: zona residencial con equipamiento compatible.
+Las Condes,UV1/EAm1,UV1/EAm1 Zona de Uso de Vivienda N°1 Equipamiento baja intensidad,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento en baja intensidad.
+Las Condes,UV1/EAm2,UV1/EAm2 Zona de Uso de Vivienda N°1 Equipamiento baja intensidad,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento en baja intensidad.
+Las Condes,UV1/EAm3,UV1/EAm3 Zona de Uso de Vivienda N°1 Equipamiento baja intensidad,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento en baja intensidad.
+Las Condes,UV1/EAm4,UV1/EAm4 Zona de Uso de Vivienda N°1 Equipamiento baja intensidad,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento en baja intensidad.
+Las Condes,UV2/EAm1,UV2/EAm1 Zona de Uso de Vivienda N°2,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento de menor intensidad.
+Las Condes,UV2/EAm2,UV2/EAm2 Zona de Uso de Vivienda N°2,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento de menor intensidad.
+Las Condes,UV2/EAm3,UV2/EAm3 Zona de Uso de Vivienda N°2,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento de menor intensidad.
+Las Condes,UV2/EAm4,UV2/EAm4 Zona de Uso de Vivienda N°2,R+Eq,Zona II,60,45,PRC Las Condes: vivienda con equipamiento de menor intensidad.
+Las Condes,UV3/EAm1,UV3/EAm1 Zona de Uso de Vivienda N°3,R+Eq+Inf,Zona III,65,50,PRC Las Condes: permite instalaciones y oficinas de media intensidad.
+Las Condes,UV3/EAm2,UV3/EAm2 Zona de Uso de Vivienda N°3,R+Eq+Inf,Zona III,65,50,PRC Las Condes: permite instalaciones y oficinas de media intensidad.
+Las Condes,UV3/EAm3,UV3/EAm3 Zona de Uso de Vivienda N°3,R+Eq+Inf,Zona III,65,50,PRC Las Condes: permite instalaciones y oficinas de media intensidad.
+Las Condes,UV3/EAm4,UV3/EAm4 Zona de Uso de Vivienda N°3,R+Eq+Inf,Zona III,65,50,PRC Las Condes: permite instalaciones y oficinas de media intensidad.
+Las Condes,UVO/EAm1,UVO/EAm1 Zona Vivienda y Oficina,R+Eq,Zona II,60,45,PRC Las Condes: vivienda y oficinas.
+Las Condes,UVO/EAm2,UVO/EAm2 Zona Vivienda y Oficina,R+Eq,Zona II,60,45,PRC Las Condes: vivienda y oficinas.
+Las Condes,UVO/EAm3,UVO/EAm3 Zona Vivienda y Oficina,R+Eq,Zona II,60,45,PRC Las Condes: vivienda y oficinas.
+Las Condes,UVO/EAm4,UVO/EAm4 Zona Vivienda y Oficina,R+Eq,Zona II,60,45,PRC Las Condes: vivienda y oficinas.
+Las Condes,UC1/EAm1,UC1/EAm1 Zona Comercial 1,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones comerciales.
+Las Condes,UC1/EAm2,UC1/EAm2 Zona Comercial 1,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones comerciales.
+Las Condes,UC1/EAm3,UC1/EAm3 Zona Comercial 1,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones comerciales.
+Las Condes,UC1/EAm4,UC1/EAm4 Zona Comercial 1,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones comerciales.
+Las Condes,UC2/EAm1,UC2/EAm1 Zona Comercial 2,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones metropolitanas.
+Las Condes,UC2/EAm2,UC2/EAm2 Zona Comercial 2,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones metropolitanas.
+Las Condes,UC2/EAm3,UC2/EAm3 Zona Comercial 2,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones metropolitanas.
+Las Condes,UC2/EAm4,UC2/EAm4 Zona Comercial 2,Eq+AP,Zona III,65,50,PRC Las Condes: comercio e instituciones metropolitanas.
+Las Condes,UC3/EAm1,UC3/EAm1 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
+Las Condes,UC3/EAm2,UC3/EAm2 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
+Las Condes,UC3/EAm3,UC3/EAm3 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
+Las Condes,UC3/EAm4,UC3/EAm4 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
