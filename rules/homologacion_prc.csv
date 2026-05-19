@@ -14,7 +14,7 @@ Providencia,UpR y ECr,Uso preferentemente Residencial y Equipamiento de Comercio
 Providencia,UpEC,Uso preferentemente de Equipamiento Comercial,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite actividades productivas.
 Providencia,UpAP e Ir,Uso preferentemente de Actividades Productivas e Industria restringida,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite residencia equipamiento actividades productivas e infraestructura.
 Las Condes,UV,Vivienda,R + Eq,Zona II,60,45,Zona residencial con equipamiento de baja intensidad.
-Las Condes,UV1,Vivienda 1 Equipamiento baja intensidad,R + Eq,Zona II,60,45,Permite equipamiento en baja intensidad.
+Las Condes,UV1/EAm4,Vivienda 1 Equipamiento baja intensidad,R + Eq,Zona II,60,45,Permite equipamiento en baja intensidad.
 Las Condes,UV1',Vivienda 1 prima Equipamiento baja intensidad,R + Eq,Zona II,60,45,Permite equipamiento en baja intensidad.
 Las Condes,UV2,Vivienda 2 Equipamiento menor intensidad,R + Eq,Zona II,60,45,Permite equipamiento en menor intensidad.
 Las Condes,UV2',Vivienda 2 prima Equipamiento menor intensidad,R + Eq,Zona II,60,45,Permite equipamiento en menor intensidad.
