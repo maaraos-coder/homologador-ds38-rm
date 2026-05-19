@@ -13,3 +13,23 @@ Providencia,UpR y E,Uso preferentemente Residencial y de Equipamiento,R + Eq + A
 Providencia,UpR y ECr,Uso preferentemente Residencial y Equipamiento de Comercio restringido,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite actividades productivas e infraestructura.
 Providencia,UpEC,Uso preferentemente de Equipamiento Comercial,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite actividades productivas.
 Providencia,UpAP e Ir,Uso preferentemente de Actividades Productivas e Industria restringida,R + Eq + AP + Inf,Zona III,65,50,PRC Providencia Cuadro N°28 permite residencia equipamiento actividades productivas e infraestructura.
+Las Condes,U-V,Vivienda,R + Eq,Zona II,60,45,Zona residencial con equipamiento de baja intensidad.
+Las Condes,U-V1,Vivienda 1 Equipamiento baja intensidad,R + Eq,Zona II,60,45,Permite equipamiento en baja intensidad.
+Las Condes,U-V1',Vivienda 1 prima Equipamiento baja intensidad,R + Eq,Zona II,60,45,Permite equipamiento en baja intensidad.
+Las Condes,U-V2,Vivienda 2 Equipamiento menor intensidad,R + Eq,Zona II,60,45,Permite equipamiento en menor intensidad.
+Las Condes,U-V2',Vivienda 2 prima Equipamiento menor intensidad,R + Eq,Zona II,60,45,Permite equipamiento en menor intensidad.
+Las Condes,U-V3,Vivienda 3 Equipamiento e Instalaciones media intensidad,R + Eq + Inf,Zona III,65,50,Permite instalaciones y oficinas de media intensidad.
+Las Condes,U-VO,Vivienda y Oficina,R + Eq,Zona II,60,45,Permite vivienda y oficinas.
+Las Condes,U-C1,Comercial 1,Eq + AP,Zona III,65,50,Comercio e instituciones comerciales.
+Las Condes,U-C1',Comercial 1 prima,Eq + AP,Zona III,65,50,Comercio e instituciones comerciales.
+Las Condes,U-C2,Comercial 2,Eq + AP,Zona III,65,50,Instituciones metropolitanas y comercio.
+Las Condes,U-C2',Comercial 2 prima,Eq + AP,Zona III,65,50,Actividades turísticas y esparcimiento.
+Las Condes,U-C3,Comercial 3,Eq + AP,Zona III,65,50,Zona comercial.
+Las Condes,U-M,Metropolitano,Eq + AP + Inf,Zona III,65,50,Uso metropolitano.
+Las Condes,U-Ee1-SE-M,Equipamiento Metropolitano,Eq + AP + Inf,Zona III,65,50,Equipamiento metropolitano.
+Las Condes,U-Ee1-SE-CC,Equipamiento Comunal Comercio y Servicios,Eq + AP,Zona III,65,50,Comercio y servicios.
+Las Condes,U-Ee1-SE-CE,Equipamiento Comunal Educacional Culto y Cultura,Eq,Zona II,60,45,Equipamiento educacional y cultural.
+Las Condes,U-Ee2,Equipamiento Recreacional Deportivo,Eq,Zona II,60,45,Equipamiento recreacional deportivo.
+Las Condes,U-Ee3,Areas Verdes Intercomunales y Comunales,AV,Zona I,55,45,Area verde.
+Las Condes,U-Ee4,Parques Metropolitanos,AV,Zona I,55,45,Parque metropolitano.
+Las Condes,U-Ee5,Proteccion Patrimonial,EP,Zona II,60,45,Zona patrimonial sin actividad productiva.
