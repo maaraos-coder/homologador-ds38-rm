@@ -45,3 +45,31 @@ Las Condes,UC3/EAm1,UC3/EAm1 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Conde
 Las Condes,UC3/EAm2,UC3/EAm2 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
 Las Condes,UC3/EAm3,UC3/EAm3 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
 Las Condes,UC3/EAm4,UC3/EAm4 Zona Comercial 3,Eq+AP,Zona III,65,50,PRC Las Condes: zona comercial.
+San Bernardo,ZU1.1,ZU1.1 Plaza de Armas,Eq+AV,Zona II,60,45,PRC San Bernardo Art.55 centro comunal con equipamiento y áreas verdes.
+San Bernardo,ZU1.2,ZU1.2 Centro,R+Eq+Inf,Zona III,65,50,PRC San Bernardo Art.56 permite infraestructura de transporte asociada a estaciones ferroviarias.
+San Bernardo,ZU1.3,ZU1.3 Sur Nogales,R+Eq+Inf,Zona III,65,50,PRC San Bernardo Art.57 permite infraestructura ferroviaria.
+San Bernardo,ZU2,ZU2 Periferia Centro,R+Eq+AP+Inf,Zona III,65,50,PRC San Bernardo Art.58 permite actividad productiva inofensiva.
+San Bernardo,ZU3,ZU3 Triángulo Gran Avenida,Eq+AP+Inf,Zona III,65,50,PRC San Bernardo Art.59 permite actividad productiva inofensiva y talleres.
+San Bernardo,ZU4,ZU4 La Vara,R+Eq+AP,Zona III,65,50,PRC San Bernardo Art.60 permite actividades productivas y talleres.
+San Bernardo,ZU5,ZU5 Los Morros Lo Blanco,R+Eq,Zona II,60,45,PRC San Bernardo Art.61 predominantemente residencial y equipamiento.
+San Bernardo,ZU6,ZU6 Estación San Bernardo,R+Eq+AP+Inf,Zona III,65,50,PRC San Bernardo Art.62 permite actividad productiva inofensiva y estaciones ferroviarias.
+San Bernardo,ZU7,ZU7 Maestranza,R+Eq,Zona II,60,45,PRC San Bernardo Art.63 residencial y equipamiento.
+San Bernardo,ZU8,ZU8 La Selva,R+Eq+AP+Inf,Zona III,65,50,PRC San Bernardo Art.64 permite actividad productiva inofensiva.
+San Bernardo,ZU9,ZU9 Borde Oriente Av. Presidente Jorge Alessandri R,Eq+AP+Inf,Zona III,65,50,PRC San Bernardo Art.65 actividad productiva inofensiva.
+San Bernardo,ZU10,ZU10 Nos-Portales,R+Eq+AP,Zona III,65,50,PRC San Bernardo Art.66 permite actividad productiva inofensiva.
+San Bernardo,ZU11,ZU11 Localidad de Lo Herrera,R+Eq+AP,Zona III,65,50,PRC San Bernardo Art.67 permite actividad productiva inofensiva.
+San Bernardo,ZUE1,ZUE1 Cerro Chena,R+Eq,Zona II,60,45,PRC San Bernardo Art.68 residencial y equipamiento.
+San Bernardo,ZUE2,ZUE2 Los Morros Cerro Negro,R+Eq,Zona II,60,45,PRC San Bernardo Art.69 residencial y equipamiento.
+San Bernardo,ZUE3,ZUE3 La Masía,R+Eq,Zona II,60,45,PRC San Bernardo Art.70 residencial y equipamiento.
+San Bernardo,ZUE4,ZUE4 Nos San León,R+Eq,Zona II,60,45,PRC San Bernardo Art.71 residencial y equipamiento.
+San Bernardo,ZUE5,ZUE5 El Cerrillo,R+Eq,Zona II,60,45,PRC San Bernardo Art.72 residencial y equipamiento.
+San Bernardo,ZUE6,ZUE6 El Mariscal San Francisco,R+Eq,Zona II,60,45,PRC San Bernardo Art.73 residencial y equipamiento.
+San Bernardo,ZI1,ZI1 Zona Industrial Exclusiva Molesta e Inofensiva,AP+Inf,Zona IV,70,70,PRC San Bernardo Art.74 zona industrial exclusiva molesta e inofensiva.
+San Bernardo,ZI2,ZI2 Zona Industrial Inofensiva,AP+Eq,Zona III,65,50,PRC San Bernardo Art.75 zona industrial inofensiva.
+San Bernardo,ZE1,ZE1 Cementerios,Eq,Zona II,60,45,PRC San Bernardo Art.76 cementerios.
+San Bernardo,ZE2,ZE2 Zona Equipamiento Metropolitano,Eq+Inf,Zona III,65,50,PRC San Bernardo Art.77 equipamiento metropolitano.
+San Bernardo,ZE3,ZE3 Zona de Interés Comunal y Conservación Histórica,EP+Eq,Zona II,60,45,PRC San Bernardo Art.78 conservación histórica.
+San Bernardo,ZE4,ZE4 Zona de Transferencia de Pasajeros y de Carga,Inf+AP,Zona III,65,50,PRC San Bernardo Art.79 transferencia de pasajeros y carga.
+San Bernardo,ZE5,ZE5 Zona de Cerros Islas y Área Verde,AV,Zona I,55,45,PRC San Bernardo Art.80 áreas verdes.
+San Bernardo,ZE6,ZE6 Inmuebles de Conservación Histórica,EP,Zona II,60,45,PRC San Bernardo Art.81 conservación histórica.
+San Bernardo,ZE7,ZE7 Zona de Derrumbe y Asentamiento de Suelos,EP,Zona I,55,45,PRC San Bernardo Art.82 área de riesgo.
