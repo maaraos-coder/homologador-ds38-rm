@@ -88,3 +88,43 @@ Recoleta,Z-S6,Z-S6 Artesanos Tirso de Molina,Eq+AP,Zona III,65,50,PRC Recoleta p
 Recoleta,U-Ea,U-Ea Sector Especial Seccional Entrecerros,R+Eq,Zona II,60,45,PRC Recoleta sector especial residencial y equipamiento.
 Recoleta,Z-R1,Z-R1 Zona No Edificable,AV,Zona I,55,45,PRC Recoleta zona no edificable.
 Recoleta,Z-R2,Z-R2 Zona Edificacion Restringida,AV+EP,Zona I,55,45,PRC Recoleta área de restricción.
+Ñuñoa,Z-1,Zona Z-1,R+Eq,Zona II,60,45,PRC Ñuñoa Art.25 permite residencial y equipamiento pero prohíbe actividades productivas.
+Ñuñoa,Z-1A,Zona Z-1A,R+Eq,Zona II,60,45,PRC Ñuñoa Art.25 permite residencial y equipamiento pero prohíbe actividades productivas.
+Ñuñoa,Z-1B,Zona Z-1B,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial con equipamiento.
+Ñuñoa,Z-1C,Zona Z-1C,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial con equipamiento.
+Ñuñoa,Z-1D,Zona Z-1D,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial con equipamiento.
+Ñuñoa,Z-2,Zona Z-2,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial predominante.
+Ñuñoa,Z-3,Zona Z-3,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial y equipamiento.
+Ñuñoa,Z-3A,Zona Z-3A,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial y equipamiento.
+Ñuñoa,Z-4,Zona Z-4,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa permite infraestructura y equipamiento de mayor intensidad.
+Ñuñoa,Z-4M,Zona Z-4m,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa permite infraestructura y equipamiento mixto.
+Ñuñoa,Z-4A,Zona Z-4A,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa permite infraestructura y equipamiento.
+Ñuñoa,Z-4B,Zona Z-4B,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa permite infraestructura y equipamiento.
+Ñuñoa,Z-4C,Zona Z-4C,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa permite infraestructura y equipamiento.
+Ñuñoa,Z-4C+R,Zona Z-4C+R,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa zona mixta residencial.
+Ñuñoa,Z-4C+RB,Zona Z-4C+RB,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa zona mixta residencial.
+Ñuñoa,Z-5,Zona Z-5,R+Eq,Zona II,60,45,PRC Ñuñoa residencial y equipamiento.
+Ñuñoa,Z-5A,Zona Z-5A,R+Eq,Zona II,60,45,PRC Ñuñoa residencial y equipamiento.
+Ñuñoa,Z-5B,Zona Z-5B,R+Eq,Zona II,60,45,PRC Ñuñoa residencial y equipamiento.
+Ñuñoa,Z-6,Zona Z-6,R+Eq+Inf,Zona III,65,50,PRC Ñuñoa equipamiento e infraestructura de mayor intensidad.
+Ñuñoa,ZI-1,Zona ZI-1,AP+Inf,Zona IV,70,70,PRC Ñuñoa zona industrial.
+Ñuñoa,Z-R1,Zona Z-R1,AV+EP,Zona I,55,45,PRC Ñuñoa zona de restricción.
+Ñuñoa,Z-US(1),Zona Z-US(1),Eq+Inf,Zona III,65,50,PRC Ñuñoa uso especial.
+Ñuñoa,Z-US(2),Zona Z-US(2),Eq+Inf,Zona III,65,50,PRC Ñuñoa uso especial.
+Ñuñoa,Z-US(3),Zona Z-US(3),Eq+Inf,Zona III,65,50,PRC Ñuñoa uso especial.
+Ñuñoa,Z-US(4),Zona Z-US(4),Eq+Inf,Zona III,65,50,PRC Ñuñoa uso especial.
+Ñuñoa,Z-MH1,Zona Patrimonial MH1,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación patrimonial.
+Ñuñoa,Z-MH2,Zona Patrimonial MH2,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación patrimonial.
+Ñuñoa,Z-MH3,Zona Patrimonial MH3,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación patrimonial.
+Ñuñoa,Z-ZT1,Zona Típica ZT1,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ZT2,Zona Típica ZT2,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ZT3,Zona Típica ZT3,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ZT4,Zona Típica ZT4,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ZT5,Zona Típica ZT5,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ZT6,Zona Típica ZT6,EP+Eq,Zona II,60,45,PRC Ñuñoa zona típica.
+Ñuñoa,Z-ICH1,Zona Inmueble Conservación Histórica 1,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+Ñuñoa,Z-ICH2,Zona Inmueble Conservación Histórica 2,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+Ñuñoa,Z-ICH3,Zona Inmueble Conservación Histórica 3,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+Ñuñoa,Z-ICH4,Zona Inmueble Conservación Histórica 4,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+Ñuñoa,Z-ICH5,Zona Inmueble Conservación Histórica 5,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+Ñuñoa,Z-ZCH1,Zona Conservación Histórica 1,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
