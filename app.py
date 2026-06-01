@@ -581,7 +581,7 @@ if actividad_productiva_detectada:
     ):
         categorias.add("EP")
 
-    return categorias
+       return categorias
 
 
 def homologar_por_tabla_sma491(categorias):
