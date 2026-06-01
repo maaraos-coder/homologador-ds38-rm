@@ -128,3 +128,10 @@ Recoleta,Z-R2,Z-R2 Zona Edificacion Restringida,AV+EP,Zona I,55,45,PRC Recoleta 
 Ñuñoa,Z-ICH4,Zona Inmueble Conservación Histórica 4,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
 Ñuñoa,Z-ICH5,Zona Inmueble Conservación Histórica 5,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
 Ñuñoa,Z-ZCH1,Zona Conservación Histórica 1,EP+Eq,Zona II,60,45,PRC Ñuñoa conservación histórica.
+El Bosque,ZONA C,ZONA C,R+Eq+AV,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite vivienda comercio oficinas equipamiento áreas verdes talleres inofensivos e industrias/bodegas inofensivas; AP inofensiva se asimila a Equipamiento.
+El Bosque,ZONA H,ZONA H,R+Eq+AV,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite vivienda comercio oficinas equipamiento áreas verdes talleres inofensivos e industrias/bodegas inofensivas; AP inofensiva se asimila a Equipamiento.
+El Bosque,ZONA R,ZONA R,R+Eq+AV,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite vivienda comercio oficinas equipamiento áreas verdes y talleres inofensivos; AP inofensiva se asimila a Equipamiento.
+El Bosque,ZONA 1-2-3,ZONA 1-2-3 Residencial Equipamiento Talleres,R+Eq,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite residencial equipamiento y talleres inofensivos; AP inofensiva se asimila a Equipamiento.
+El Bosque,ZONA 4,ZONA 4 Industrial,AP,Zona IV,70,70,PRC El Bosque EPRC2025 Art.2: permite industrias inofensivas e industrias molestas no fumígenas ni peligrosas; al permitir industria molesta corresponde Actividad Productiva.
+El Bosque,ZONA SECCIONAL LO MORENO Z-A,ZONA SECCIONAL LO MORENO Z-A,R+Eq,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite vivienda y equipamiento vecinal/mediano.
+El Bosque,Z-B,Z-B Equipamiento Deportivo,Eq,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite equipamiento de deportes de escala mediana.
