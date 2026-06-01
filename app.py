@@ -455,7 +455,7 @@ def detectar_categorias_oguc(fila):
     ):
         return {"R", "Eq", "AP", "Inf"}
 
-    # R = Residencial
+    # Residencial
     if (
         "residencial" in texto_norm
         or "vivienda" in texto_norm
@@ -464,7 +464,7 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("R")
 
-    # Eq = Equipamiento
+    # Equipamiento
     if (
         "equipamiento" in texto_norm
         or "comercio" in texto_norm
@@ -481,70 +481,65 @@ def detectar_categorias_oguc(fila):
     ):
         categorias.add("Eq")
 
-   # =====================================================
-# AP = Actividad Productiva
-# Criterio SMA 491/2016:
-# Si el IPT permite expresamente Actividades Productivas
-# Inofensivas, estas se asimilan a Equipamiento.
-# =====================================================
+    # =====================================================
+    # ACTIVIDADES PRODUCTIVAS
+    # CRITERIO SMA 491/2016
+    # Las actividades productivas INOFENSIVAS
+    # se homologan como Equipamiento.
+    # =====================================================
 
-actividad_productiva_detectada = (
-    "actividad productiva" in texto_norm
-    or "actividades productivas" in texto_norm
-    or "productiva" in texto_norm
-    or "productivas" in texto_norm
-    or "industrial" in texto_norm
-    or "industria" in texto_norm
-    or "taller" in texto_norm
-    or "talleres" in texto_norm
-    or "bodega" in texto_norm
-    or "bodegas" in texto_norm
-    or "almacenamiento" in texto_norm
-    or "servicio de caracter industrial" in texto_norm
-    or "servicios de caracter industrial" in texto_norm
-    or "zona industrial" in texto_norm
-    or "industrial exclusiva" in texto_norm
-)
+    actividad_productiva_detectada = (
+        "actividad productiva" in texto_norm
+        or "actividades productivas" in texto_norm
+        or "productiva" in texto_norm
+        or "productivas" in texto_norm
+        or "industrial" in texto_norm
+        or "industria" in texto_norm
+        or "taller" in texto_norm
+        or "talleres" in texto_norm
+        or "bodega" in texto_norm
+        or "bodegas" in texto_norm
+        or "almacenamiento" in texto_norm
+        or "servicio de caracter industrial" in texto_norm
+        or "servicios de caracter industrial" in texto_norm
+        or "zona industrial" in texto_norm
+        or "industrial exclusiva" in texto_norm
+    )
 
-actividad_productiva_inofensiva = (
-    "actividad productiva inofensiva" in texto_norm
-    or "actividades productivas inofensivas" in texto_norm
-    or "actividad productiva de tipo inofensivo" in texto_norm
-    or "actividades productivas de tipo inofensivo" in texto_norm
-    or "actividad productiva inofensivo" in texto_norm
-    or "actividades productivas inofensivo" in texto_norm
-    or "industria inofensiva" in texto_norm
-    or "industrial inofensiva" in texto_norm
-    or "industrial inofensivo" in texto_norm
-    or "taller inofensivo" in texto_norm
-    or "talleres inofensivos" in texto_norm
-    or "almacenamiento inofensivo" in texto_norm
-    or "bodega inofensiva" in texto_norm
-    or "bodegas inofensivas" in texto_norm
-)
+    actividad_productiva_inofensiva = (
+        "actividad productiva inofensiva" in texto_norm
+        or "actividades productivas inofensivas" in texto_norm
+        or "industria inofensiva" in texto_norm
+        or "industrial inofensiva" in texto_norm
+        or "industrial inofensivo" in texto_norm
+        or "taller inofensivo" in texto_norm
+        or "talleres inofensivos" in texto_norm
+        or "almacenamiento inofensivo" in texto_norm
+        or "bodega inofensiva" in texto_norm
+        or "bodegas inofensivas" in texto_norm
+    )
 
-actividad_productiva_no_inofensiva = (
-    "molesta" in texto_norm
-    or "molestas" in texto_norm
-    or "insalubre" in texto_norm
-    or "insalubres" in texto_norm
-    or "contaminante" in texto_norm
-    or "contaminantes" in texto_norm
-    or "peligrosa" in texto_norm
-    or "peligrosas" in texto_norm
-    or "industrial exclusiva" in texto_norm
-    or "industria exclusiva" in texto_norm
-)
+    actividad_productiva_no_inofensiva = (
+        "molesta" in texto_norm
+        or "molestas" in texto_norm
+        or "insalubre" in texto_norm
+        or "insalubres" in texto_norm
+        or "contaminante" in texto_norm
+        or "contaminantes" in texto_norm
+        or "peligrosa" in texto_norm
+        or "peligrosas" in texto_norm
+        or "industrial exclusiva" in texto_norm
+        or "industria exclusiva" in texto_norm
+    )
 
-if actividad_productiva_detectada:
+    if actividad_productiva_detectada:
 
-    if actividad_productiva_inofensiva and not actividad_productiva_no_inofensiva:
-        categorias.add("Eq")
+        if actividad_productiva_inofensiva and not actividad_productiva_no_inofensiva:
+            categorias.add("Eq")
+        else:
+            categorias.add("AP")
 
-    else:
-        categorias.add("AP")
-
-    # Inf = Infraestructura
+    # Infraestructura
     if (
         "infraestructura" in texto_norm
         or "transporte" in texto_norm
@@ -561,7 +556,7 @@ if actividad_productiva_detectada:
     ):
         categorias.add("Inf")
 
-    # AV = Área Verde
+    # Área Verde
     if (
         "area verde" in texto_norm
         or "areas verdes" in texto_norm
@@ -571,7 +566,7 @@ if actividad_productiva_detectada:
     ):
         categorias.add("AV")
 
-    # EP = Espacio Público
+    # Espacio Público
     if (
         "espacio publico" in texto_norm
         or "espacios publicos" in texto_norm
@@ -581,7 +576,7 @@ if actividad_productiva_detectada:
     ):
         categorias.add("EP")
 
-       return categorias
+    return categorias
 
 
 def homologar_por_tabla_sma491(categorias):
