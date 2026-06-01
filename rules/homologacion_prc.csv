@@ -135,3 +135,18 @@ El Bosque,ZONA 1-2-3,ZONA 1-2-3 Residencial Equipamiento Talleres,R+Eq,Zona II,6
 El Bosque,ZONA 4,ZONA 4 Industrial,AP,Zona IV,70,70,PRC El Bosque EPRC2025 Art.2: permite industrias inofensivas e industrias molestas no fumígenas ni peligrosas; al permitir industria molesta corresponde Actividad Productiva.
 El Bosque,ZONA SECCIONAL LO MORENO Z-A,ZONA SECCIONAL LO MORENO Z-A,R+Eq,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite vivienda y equipamiento vecinal/mediano.
 El Bosque,Z-B,Z-B Equipamiento Deportivo,Eq,Zona II,60,45,PRC El Bosque EPRC2025 Art.2: permite equipamiento de deportes de escala mediana.
+Padre Hurtado,A,Centro Comunal,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento espacio publico y area verde.
+Padre Hurtado,B1,Corredor Regional,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento espacio publico y area verde.
+Padre Hurtado,B2,Corredor Intercomunal,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento espacio publico y area verde.
+Padre Hurtado,B3,Corredor Local,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento espacio publico y area verde.
+Padre Hurtado,C1,Habitacional,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento basico espacio publico y area verde.
+Padre Hurtado,C2,Habitacional,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento basico espacio publico y area verde.
+Padre Hurtado,C3,Habitacional,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento basico espacio publico y area verde.
+Padre Hurtado,H1,Habitacional,R+Eq+AV+EP,Zona II,60,45,Permite vivienda equipamiento basico comercio espacio publico y area verde.
+Padre Hurtado,D,Mixta,R+Eq+Inf+AV+EP,Zona III,65,50,Permite AP inofensivas equipamiento infraestructura vivienda espacio publico y area verde; AP inofensiva homologada como equipamiento.
+Padre Hurtado,E1,Centro Civico,Eq+AV+EP,Zona II,60,45,Permite equipamiento espacio publico y area verde.
+Padre Hurtado,E2,Equipamiento Comunitario,R+Eq+AV+EP,Zona II,60,45,Permite equipamiento vivienda espacio publico y area verde.
+Padre Hurtado,E3,Recreacional Deportivo,Eq+AV+EP,Zona II,60,45,Permite equipamiento recreacional espacio publico y area verde.
+Padre Hurtado,E4,Historico Cultural,Eq+AV+EP,Zona II,60,45,Permite equipamiento cultural espacio publico y area verde.
+Padre Hurtado,E5,Areas Verdes e Infraestructura,Eq+Inf+AV+EP,Zona III,65,50,Permite infraestructura equipamiento deportivo espacio publico y area verde.
+Padre Hurtado,F1,Industria,AP+Eq+Inf+AV+EP,Zona IV,70,70,Permite actividades productivas molestas e inofensivas equipamiento infraestructura espacio publico y area verde.
