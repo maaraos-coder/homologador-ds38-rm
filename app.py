@@ -430,7 +430,6 @@ def detectar_limite_urbano_prms(lat, lon, gdf_prms_lu):
 # =========================================================
 # HOMOLOGACIÓN DS38
 # =========================================================
-
 def detectar_categorias_oguc(fila):
     texto = " ".join([
         str(fila.get("UPERM", "")),
