@@ -1107,13 +1107,17 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.markdown("## 3. Usos de suelo y categorías consideradas")
 
-    st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
+st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
 
-    st.write("**Usos de suelo según ordenanza / tabla de homologación:**")
+st.write("**Usos de suelo considerados para homologación:**")
+
+if regla_csv:
+    st.write(regla_csv.get("fundamento", ""))
+else:
     st.write(usos_suelo)
 
-    st.write("**Categorías consideradas para homologación:**")
-    st.success(categorias)
+st.write("**Categorías consideradas para homologación:**")
+st.success(categorias)
 
     # =====================================================
     # 4. CLASIFICACIÓN DS38
