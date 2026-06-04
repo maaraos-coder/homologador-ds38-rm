@@ -133,18 +133,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="homologador-header">', unsafe_allow_html=True)
-col_logo, col_title = st.columns([1, 5])
 
-with col_logo:
-    if os.path.exists(LOGO_PATH):
-        st.image(LOGO_PATH, width=135)
-    else:
-        st.markdown("## ◉")
+col1, col2 = st.columns([1.4, 3])
 
-with col_title:
-    st.markdown("# HOMOLOGADOR")
-    st.markdown("### Usos de suelo / Límites Máximos Permisibles")
-    st.markdown('<span class="maab-signature">Desarrollado por MAAB</span>', unsafe_allow_html=True)
+with col1:
+    st.image(LOGO_PATH, width=320)
+
+with col2:
+    st.markdown("""
+    <div style="padding-top:35px;">
+        <h1 style="font-size:56px;margin-bottom:0;">
+        HOMOLOGADOR
+        </h1>
+
+        <h3 style="margin-top:5px;color:#38BDF8;">
+        Usos de Suelo / Límites Máximos Permisibles
+        </h3>
+
+        <p style="color:#38BDF8;font-weight:700;">
+        Desarrollado por MAAB
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
