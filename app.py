@@ -139,41 +139,38 @@ with col1:
         st.image(LOGO_PATH, width=320)
 
 with col2:
-    st.markdown("""
-    <div style="
-        padding-top:35px;
-        padding-left:10px;
-    ">
-        <h1 style="
-            font-size:64px;
-            font-weight:900;
-            margin-bottom:0;
-            letter-spacing:2px;
-            color:#FFFFFF;
-        ">
-            HOMOLOGADOR
-        </h1>
 
-        <h3 style="
-            margin-top:8px;
-            color:#38BDF8;
-            font-size:28px;
-            font-weight:600;
-        ">
-            Usos de Suelo / Límites Máximos Permisibles
-        </h3>
+    st.markdown(
+        "# HOMOLOGADOR"
+    )
 
-        <p style="
-            color:#93C5FD;
-            font-size:18px;
-            font-weight:700;
-            margin-top:16px;
-            letter-spacing:1px;
+    st.markdown(
+        """
+        <span style="
+        color:#38BDF8;
+        font-size:28px;
+        font-weight:600;
         ">
-            Desarrollado por MAAB
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+        Usos de Suelo / Límites Máximos Permisibles
+        </span>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("")
+
+    st.markdown(
+        """
+        <span style="
+        color:#93C5FD;
+        font-size:18px;
+        font-weight:700;
+        ">
+        Desarrollado por MAAB
+        </span>
+        """,
+        unsafe_allow_html=True
+    )
 
 st.divider()
 
