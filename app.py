@@ -978,31 +978,33 @@ def convertir_a_utm(lat, lon):
         )
         punto_utm = punto.to_crs(epsg=32719)
         geom = punto_utm.geometry.iloc[0]
-        return round(float(geom.x), 2), round(float(geom.y), 2)
+        return round(geom.x, 2), round(geom.y, 2)
     except Exception:
         return "-", "-"
 
 
-def construir_texto_usos_ipt(fila):
-    partes = []
+def obtener_usos_desde_regla_o_shape(regla_csv, fila):
+    if regla_csv:
+        for campo in [
+            "usos_suelo",
+            "usos_ordenanza",
+            "usos_permitidos",
+            "uso_suelo",
+            "descripcion_usos"
+        ]:
+            if campo in regla_csv and str(regla_csv.get(campo, "")).strip():
+                return str(regla_csv.get(campo, "")).strip()
 
-    upref = str(fila.get("UPREF", "")).strip()
-    uperm = str(fila.get("UPERM", "")).strip()
-    uproh = str(fila.get("UPROH", "")).strip()
+    usos_shape = " ".join([
+        str(fila.get("UPREF", "")),
+        str(fila.get("UPERM", "")),
+        str(fila.get("UPROH", ""))
+    ]).strip()
 
-    if upref and upref.lower() != "nan":
-        partes.append(f"Usos preferentes: {upref}")
+    if not usos_shape or usos_shape.lower() == "nan":
+        usos_shape = texto_atributos(fila)
 
-    if uperm and uperm.lower() != "nan":
-        partes.append(f"Usos permitidos: {uperm}")
-
-    if uproh and uproh.lower() != "nan":
-        partes.append(f"Usos prohibidos: {uproh}")
-
-    if partes:
-        return "\n\n".join(partes)
-
-    return texto_atributos(fila)
+    return usos_shape
 
 
 def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m):
@@ -1020,32 +1022,10 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         tolerancia_m
     )
 
-    st.markdown("## Resultado de homologación")
+    st.subheader("Resultado de homologación")
 
     if resultado.empty:
-        utm_e, utm_n = convertir_a_utm(lat, lon)
-
-        col_a, col_b, col_c = st.columns(3)
-        with col_a:
-            st.metric("Clasificación territorial", estado_lu)
-        with col_b:
-            st.metric("Coordenada UTM E", utm_e)
-        with col_c:
-            st.metric("Coordenada UTM N", utm_n)
-
-        if estado_lu == "Fuera de límite urbano PRMS / área rural":
-            st.markdown(
-                """
-                <div class="ds38-card">
-                    <h1>Zona Rural</h1>
-                    <p>Homologación preliminar D.S. N°38/2011 MMA</p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            st.info("El punto se encuentra fuera del límite urbano PRMS. Corresponde evaluación como Zona Rural del D.S. N°38/2011 MMA.")
-        else:
-            st.warning("No se encontró información territorial para el punto consultado.")
+        st.warning("No se encontró información territorial para el punto.")
         return
 
     fila = resultado.iloc[0]
@@ -1061,106 +1041,82 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         fila.get("NOMBRE", "")
     )
 
+    fuente = fila.get("fuente_normativa", "")
     metodo = fila.get("metodo_busqueda", "")
     distancia = fila.get("distancia_m", "")
-    fuente = fila.get("fuente_normativa", "")
-    observacion_jerarquia = fila.get("observacion_jerarquia", "")
+
     utm_e, utm_n = convertir_a_utm(lat, lon)
-    usos_ipt = construir_texto_usos_ipt(fila)
 
-    if regla_csv:
-        fuente_homologacion = "Tabla maestra CSV de homologación PRC"
-        fuente_ordenanza = regla_csv.get("fuente_ordenanza", "") or fuente
-        fecha_ordenanza = regla_csv.get("fecha_ordenanza", "") or fila.get("PLANO", "")
-    else:
-        fuente_homologacion = "Reglas automáticas DS38 / Res. Ex. SMA N°491/2016"
-        fuente_ordenanza = fuente
-        fecha_ordenanza = fila.get("PLANO", "") or fila.get("DECRETO", "")
+    usos_suelo = obtener_usos_desde_regla_o_shape(regla_csv, fila)
 
     # =====================================================
-    # BLOQUE 1: UBICACIÓN Y TERRITORIO
+    # 1. UBICACIÓN TERRITORIAL
     # =====================================================
 
-    st.markdown("### 1. Ubicación y clasificación territorial")
+    st.markdown("## 1. Ubicación territorial")
 
-    col_a, col_b, col_c = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-    with col_a:
+    with col1:
         st.metric("Clasificación territorial", estado_lu)
 
-    with col_b:
+    with col2:
         st.metric("Comuna", fila.get("COMUNA", ""))
 
-    with col_c:
-        st.metric("Método de búsqueda", metodo if metodo else "-")
-
-    col_utm1, col_utm2, col_geo = st.columns(3)
-
-    with col_utm1:
-        st.metric("UTM Este WGS84 19S", utm_e)
-
-    with col_utm2:
-        st.metric("UTM Norte WGS84 19S", utm_n)
-
-    with col_geo:
-        st.metric("Lat / Lon", f"{round(lat, 7)} / {round(lon, 7)}")
+    with col3:
+        st.metric("Coordenadas UTM", f"E {utm_e} / N {utm_n}")
 
     if metodo == "Por tolerancia espacial":
         st.warning(
             f"El punto no intersectó directamente el polígono. "
             f"Se utilizó el polígono más cercano a {distancia} m."
         )
+
+    # =====================================================
+    # 2. FUENTE NORMATIVA
+    # =====================================================
+
+    st.markdown("## 2. Fuente normativa utilizada")
+
+    if fuente == "PRC":
+        fuente_normativa = "Plan Regulador Comunal"
+    elif fuente == "PRMS_USO_Suelo":
+        fuente_normativa = "Plan Regulador Metropolitano de Santiago"
     else:
-        st.success("Punto ubicado dentro de una capa IPT.")
+        fuente_normativa = fuente
 
-    if observacion_jerarquia:
-        st.info(observacion_jerarquia)
+    col_a, col_b = st.columns(2)
 
-    # =====================================================
-    # BLOQUE 2: FUENTE NORMATIVA Y ZONA IPT
-    # =====================================================
+    with col_a:
+        st.write("**Fuente normativa utilizada:**", fuente_normativa)
 
-    st.markdown("### 2. Fuente normativa y zona IPT")
+    with col_b:
+        decreto = fila.get("DECRETO", "")
+        plano = fila.get("PLANO", "")
 
-    col1, col2 = st.columns(2)
+        fecha_decreto = " / ".join([
+            str(x) for x in [decreto, plano]
+            if str(x).strip() and str(x).lower() != "nan"
+        ])
 
-    with col1:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("**Fuente normativa utilizada:**", fuente)
-        st.write("**Fuente de homologación:**", fuente_homologacion)
-        st.write("**Ordenanza / fuente:**", fuente_ordenanza)
-        st.write("**Fecha / decreto / plano:**", fecha_ordenanza)
-        st.write("**Archivo origen:**", fila.get("archivo_origen", ""))
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.write("**Zona PRC/IPT:**", fila.get("ZONA", ""))
-        st.write("**Nombre de zona:**", fila.get("NOMBRE", ""))
-        st.write("**Suelo:**", fila.get("SUELO", ""))
-        st.write("**Distancia de ajuste:**", distancia)
-        st.write("**Detalle límite urbano PRMS:**", detalle_lu)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.write("**Fecha / Decreto / Plano:**", fecha_decreto)
 
     # =====================================================
-    # BLOQUE 3: USOS Y CATEGORÍAS
+    # 3. USOS DE SUELO Y CATEGORÍAS
     # =====================================================
 
-    st.markdown("### 3. Usos de suelo y categorías de homologación")
+    st.markdown("## 3. Usos de suelo y categorías consideradas")
 
-    st.markdown("**Usos de suelo detectados desde IPT**")
-    st.text_area(
-        "Usos IPT",
-        usos_ipt,
-        height=140,
-        label_visibility="collapsed"
-    )
+    st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
 
-    st.markdown("**Categorías consideradas para homologación**")
-    st.success(f"{categorias}")
+    st.write("**Usos de suelo según ordenanza / tabla de homologación:**")
+    st.write(usos_suelo)
+
+    st.write("**Categorías consideradas para homologación:**")
+    st.success(categorias)
 
     # =====================================================
-    # BLOQUE 4: RESULTADO DS38 DESTACADO
+    # 4. CLASIFICACIÓN DS38
     # =====================================================
 
     st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
@@ -1200,56 +1156,23 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
             unsafe_allow_html=True
         )
 
-    # =====================================================
-    # BLOQUE 5: CRITERIO
-    # =====================================================
-
-    st.markdown("### 5. Criterio de homologación aplicado")
+    st.markdown("### Criterio de homologación")
     st.write(criterio)
-
     # =====================================================
     # TEXTO TÉCNICO PRELIMINAR
     # =====================================================
 
-    advertencia_lu = ""
-    if estado_lu == "Fuera de límite urbano PRMS / área rural":
-        advertencia_lu = (
-            " Asimismo, el punto se encuentra fuera del límite urbano PRMS, "
-            "por lo que corresponde su evaluación como Zona Rural del D.S. N°38/2011 MMA."
-        )
+    
 
-    advertencia_tol = ""
-    if metodo == "Por tolerancia espacial":
-        advertencia_tol = (
-            f" Cabe hacer presente que el punto no intersectó directamente el polígono "
-            f"de zonificación, por lo que se aplicó una tolerancia espacial de {tolerancia_m} m, "
-            f"identificándose el polígono más cercano a {distancia} m."
-        )
 
-    advertencia_jerarquia = ""
-    if observacion_jerarquia:
-        advertencia_jerarquia = f" {observacion_jerarquia}"
 
-    texto = f"""
-Para el punto consultado, ubicado en coordenadas UTM WGS84 Huso 19S E {utm_e} / N {utm_n}, comuna de {fila.get("COMUNA", "")}, se identifica información territorial proveniente de {fuente}, correspondiente a la zona IPT {fila.get("ZONA", "")}, denominada {fila.get("NOMBRE", "")}.
-
-Los usos de suelo detectados desde el Instrumento de Planificación Territorial corresponden a: {usos_ipt}.
-
-Para efectos de homologación acústica conforme al D.S. N°38/2011 MMA y la Resolución Exenta SMA N°491/2016, se consideraron las siguientes categorías de uso de suelo: {categorias}.
-
-Conforme al criterio aplicado, la zona se homologa preliminarmente como {zona_ds38}, con límite máximo permisible de {limite_dia} en periodo diurno y {limite_noche} en periodo nocturno.{advertencia_jerarquia}{advertencia_lu}{advertencia_tol}
-"""
-
-    st.markdown("### Texto técnico preliminar")
-    st.text_area("Redacción", texto.strip(), height=320)
 
     st.markdown(
         '<p class="maab-signature">HOMOLOGADOR · Usos de suelo / Límites Máximos Permisibles · Desarrollado por MAAB</p>',
         unsafe_allow_html=True
     )
 
-    with st.expander("Ver todos los atributos de la capa"):
-        st.write(pd.DataFrame([fila.drop(labels=["geometry"], errors="ignore")]))
+   
 
 
 # =========================================================
