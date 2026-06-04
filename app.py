@@ -1124,8 +1124,7 @@ st.success(categorias)
     # =====================================================
 
 st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
-
-    col_zona, col_dia, col_noche = st.columns([2, 1, 1])
+col_zona, col_dia, col_noche = st.columns([2, 1, 1])
 
     with col_zona:
         st.markdown(
