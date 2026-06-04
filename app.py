@@ -1126,8 +1126,8 @@ st.success(categorias)
 st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
 col_zona, col_dia, col_noche = st.columns([2, 1, 1])
 
-    with col_zona:
-        st.markdown(
+with col_zona:
+    st.markdown(
             f"""
             <div class="ds38-card">
                 <h1>{zona_ds38}</h1>
@@ -1137,8 +1137,8 @@ col_zona, col_dia, col_noche = st.columns([2, 1, 1])
             unsafe_allow_html=True
         )
 
-    with col_dia:
-        st.markdown(
+with col_dia:
+    st.markdown(
             f"""
             <div class="limit-card">
                 <h2>{limite_dia}</h2>
@@ -1148,8 +1148,8 @@ col_zona, col_dia, col_noche = st.columns([2, 1, 1])
             unsafe_allow_html=True
         )
 
-    with col_noche:
-        st.markdown(
+with col_noche:
+    st.markdown(
             f"""
             <div class="limit-card">
                 <h2>{limite_noche}</h2>
