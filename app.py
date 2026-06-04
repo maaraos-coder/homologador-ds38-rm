@@ -1109,7 +1109,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
 st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
 
-st.write("**Usos de suelo considerados para homologación:**")
+st.write("**Fundamento de homologación:**")
 
 if regla_csv:
     st.write(regla_csv.get("fundamento", ""))
