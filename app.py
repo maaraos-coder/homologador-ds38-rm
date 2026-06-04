@@ -968,7 +968,6 @@ def buscar_jerarquico(lat, lon, gdf_prc, gdf_prms_uso, tolerancia_m):
 # RESULTADOS
 # =========================================================
 
-
 def convertir_a_utm(lat, lon):
     try:
         punto = gpd.GeoDataFrame(
@@ -984,6 +983,11 @@ def convertir_a_utm(lat, lon):
 
 
 def obtener_usos_desde_regla_o_shape(regla_csv, fila):
+    """
+    Si existe una regla en el CSV, se prioriza la información validada en la tabla maestra.
+    Si el CSV no tiene columna específica de usos, se muestra el fundamento.
+    Solo si no existe regla CSV se usa lo que viene desde el shapefile.
+    """
     if regla_csv:
         for campo in [
             "usos_suelo",
@@ -992,8 +996,15 @@ def obtener_usos_desde_regla_o_shape(regla_csv, fila):
             "uso_suelo",
             "descripcion_usos"
         ]:
-            if campo in regla_csv and str(regla_csv.get(campo, "")).strip():
-                return str(regla_csv.get(campo, "")).strip()
+            valor = str(regla_csv.get(campo, "")).strip()
+            if valor and valor.lower() != "nan":
+                return valor
+
+        fundamento = str(regla_csv.get("fundamento", "")).strip()
+        if fundamento and fundamento.lower() != "nan":
+            return fundamento
+
+        return "Información definida en tabla maestra de homologación PRC."
 
     usos_shape = " ".join([
         str(fila.get("UPREF", "")),
@@ -1005,6 +1016,16 @@ def obtener_usos_desde_regla_o_shape(regla_csv, fila):
         usos_shape = texto_atributos(fila)
 
     return usos_shape
+
+
+def nombre_fuente_normativa(fuente):
+    if fuente == "PRC":
+        return "Plan Regulador Comunal"
+    if fuente == "PRMS_USO_Suelo":
+        return "Plan Regulador Metropolitano de Santiago"
+    if fuente == "PRMS_LU":
+        return "Límite Urbano PRMS"
+    return fuente if fuente else "No informada"
 
 
 def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m):
@@ -1025,7 +1046,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     st.subheader("Resultado de homologación")
 
     if resultado.empty:
-        st.warning("No se encontró información territorial para el punto.")
+        if estado_lu == "Fuera de límite urbano PRMS / área rural":
+            st.warning("El punto se encuentra fuera del límite urbano PRMS / área rural.")
+            st.info("Homologación preliminar: Zona Rural del D.S. N°38/2011 MMA.")
+        else:
+            st.warning("No se encontró información territorial para el punto.")
         return
 
     fila = resultado.iloc[0]
@@ -1046,8 +1071,8 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     distancia = fila.get("distancia_m", "")
 
     utm_e, utm_n = convertir_a_utm(lat, lon)
-
     usos_suelo = obtener_usos_desde_regla_o_shape(regla_csv, fila)
+    fuente_normativa = nombre_fuente_normativa(fuente)
 
     # =====================================================
     # 1. UBICACIÓN TERRITORIAL
@@ -1078,13 +1103,6 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.markdown("## 2. Fuente normativa utilizada")
 
-    if fuente == "PRC":
-        fuente_normativa = "Plan Regulador Comunal"
-    elif fuente == "PRMS_USO_Suelo":
-        fuente_normativa = "Plan Regulador Metropolitano de Santiago"
-    else:
-        fuente_normativa = fuente
-
     col_a, col_b = st.columns(2)
 
     with col_a:
@@ -1093,13 +1111,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     with col_b:
         decreto = fila.get("DECRETO", "")
         plano = fila.get("PLANO", "")
-
         fecha_decreto = " / ".join([
             str(x) for x in [decreto, plano]
             if str(x).strip() and str(x).lower() != "nan"
         ])
-
-        st.write("**Fecha / Decreto / Plano:**", fecha_decreto)
+        st.write("**Fecha / Decreto / Plano:**", fecha_decreto if fecha_decreto else "No informado")
 
     # =====================================================
     # 3. USOS DE SUELO Y CATEGORÍAS
@@ -1109,11 +1125,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
 
-    st.write("**Fundamento de homologación:**")
-
-    if regla_csv:
-        st.write(regla_csv.get("fundamento", ""))
-    else:
+    st.write("**Usos de suelo / fundamento considerado para homologación:**")
     st.write(usos_suelo)
 
     st.write("**Categorías consideradas para homologación:**")
@@ -1123,11 +1135,12 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     # 4. CLASIFICACIÓN DS38
     # =====================================================
 
-st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
-col_zona, col_dia, col_noche = st.columns([2, 1, 1])
+    st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
 
-with col_zona:
-    st.markdown(
+    col_zona, col_dia, col_noche = st.columns([2, 1, 1])
+
+    with col_zona:
+        st.markdown(
             f"""
             <div class="ds38-card">
                 <h1>{zona_ds38}</h1>
@@ -1137,8 +1150,8 @@ with col_zona:
             unsafe_allow_html=True
         )
 
-with col_dia:
-    st.markdown(
+    with col_dia:
+        st.markdown(
             f"""
             <div class="limit-card">
                 <h2>{limite_dia}</h2>
@@ -1148,8 +1161,8 @@ with col_dia:
             unsafe_allow_html=True
         )
 
-with col_noche:
-    st.markdown(
+    with col_noche:
+        st.markdown(
             f"""
             <div class="limit-card">
                 <h2>{limite_noche}</h2>
@@ -1161,21 +1174,11 @@ with col_noche:
 
     st.markdown("### Criterio de homologación")
     st.write(criterio)
-    # =====================================================
-    # TEXTO TÉCNICO PRELIMINAR
-    # =====================================================
-
-    
-
-
-
 
     st.markdown(
         '<p class="maab-signature">HOMOLOGADOR · Usos de suelo / Límites Máximos Permisibles · Desarrollado por MAAB</p>',
         unsafe_allow_html=True
     )
-
-   
 
 
 # =========================================================
