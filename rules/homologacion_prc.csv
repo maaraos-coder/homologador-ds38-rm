@@ -150,3 +150,20 @@ Padre Hurtado,E3,Recreacional Deportivo,Eq+AV+EP,Zona II,60,45,Permite equipamie
 Padre Hurtado,E4,Historico Cultural,Eq+AV+EP,Zona II,60,45,Permite equipamiento cultural espacio publico y area verde.
 Padre Hurtado,E5,Areas Verdes e Infraestructura,Eq+Inf+AV+EP,Zona III,65,50,Permite infraestructura equipamiento deportivo espacio publico y area verde.
 Padre Hurtado,F1,Industria,AP+Eq+Inf+AV+EP,Zona IV,70,70,Permite actividades productivas molestas e inofensivas equipamiento infraestructura espacio publico y area verde.
+Maipu,ZC-1,Centro Civico,Eq+EP+AV,Zona II,60,45
+Maipu,ZC-2,Centro Comercial,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZC-3,Mixta Comercio y Servicios,R+Eq+EP+AV,Zona III,65,50
+Maipu,ZC-4,Mixta Equipamiento y Vivienda,R+Eq+EP+AV,Zona III,65,50
+Maipu,ZH-1,Habitacional 1,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-2,Habitacional 2,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-3,Habitacional 3,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-4,Habitacional 4,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-5,Habitacional 5,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-6,Habitacional 6,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-7,Habitacional 7,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-8,Habitacional 8,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-9,Habitacional 9,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZH-10,Habitacional 10,R+Eq+EP+AV,Zona II,60,45
+Maipu,ZI-1,Industrial 1,AP+Eq+Inf+EP+AV,Zona IV,70,70
+Maipu,ZI-2,Industrial 2,AP+Eq+Inf+EP+AV,Zona IV,70,70
+Maipu,ZI-3,Industrial 3,AP+Eq+Inf+EP+AV,Zona IV,70,70
