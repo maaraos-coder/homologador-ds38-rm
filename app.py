@@ -1111,9 +1111,9 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.write("**Fundamento de homologación:**")
 
-if regla_csv:
-    st.write(regla_csv.get("fundamento", ""))
-else:
+    if regla_csv:
+        st.write(regla_csv.get("fundamento", ""))
+    else:
     st.write(usos_suelo)
 
     st.write("**Categorías consideradas para homologación:**")
