@@ -263,8 +263,20 @@ def crear_gdf_vacio():
 @st.cache_data
 def cargar_tabla_homologacion():
     try:
-        return pd.read_csv(TABLA_HOMOLOGACION_PATH)
-    except Exception:
+        import os
+
+        st.write("DEBUG PATH:", TABLA_HOMOLOGACION_PATH)
+        st.write("DEBUG archivo existe:", os.path.exists(TABLA_HOMOLOGACION_PATH))
+
+        df = pd.read_csv(TABLA_HOMOLOGACION_PATH)
+
+        st.success(f"CSV cargado correctamente. Filas: {len(df)}")
+        st.write("DEBUG columnas:", list(df.columns))
+
+        return df
+
+    except Exception as e:
+        st.error(f"ERROR AL CARGAR CSV: {e}")
         return pd.DataFrame()
 
 
