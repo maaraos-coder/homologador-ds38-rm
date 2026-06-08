@@ -304,11 +304,19 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     ]
 st.write("DEBUG zona shape:", zona_prc, "→", zona_norm)
 st.write("DEBUG comuna:", comuna, "→", comuna_norm)
-st.write("DEBUG matches:", match[["comuna", "zona_prc", "categorias", "zona_ds38", "fundamento"]] if not match.empty else "SIN MATCH")
-    if match.empty:
-        return None
 
-    return match.iloc[0].to_dict()
+if not match.empty:
+    st.write(
+        "DEBUG matches:",
+        match[["comuna", "zona_prc", "categorias", "zona_ds38", "fundamento"]]
+    )
+else:
+    st.write("DEBUG matches: SIN MATCH")
+
+if match.empty:
+    return None
+
+return match.iloc[0].to_dict()
 
 
 # =========================================================
