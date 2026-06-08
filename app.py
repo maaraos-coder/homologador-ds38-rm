@@ -268,6 +268,14 @@ def cargar_tabla_homologacion():
         return pd.DataFrame()
 
 
+def normalizar_codigo_zona(texto):
+    texto = normalizar(texto)
+    texto = texto.replace(" ", "")
+    texto = texto.replace("-", "")
+    texto = texto.replace("_", "")
+    return texto
+
+
 def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     tabla = cargar_tabla_homologacion()
 
@@ -277,11 +285,11 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     tabla = tabla.copy()
 
     comuna_norm = normalizar(comuna)
-    zona_norm = normalizar(zona_prc)
+    zona_norm = normalizar_codigo_zona(zona_prc)
     nombre_norm = normalizar(nombre_zona)
 
     tabla["comuna_norm"] = tabla["comuna"].apply(normalizar)
-    tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar)
+    tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar_codigo_zona)
     tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
 
     match = tabla[
