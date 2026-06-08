@@ -1135,21 +1135,21 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     # 3. USOS DE SUELO Y CATEGORÍAS
     # =====================================================
 
-st.markdown("## 3. Usos de suelo y categorías consideradas")
+    st.markdown("## 3. Usos de suelo y categorías consideradas")
 
-st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
+    st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
 
-st.write("**Usos de suelo / fundamento considerado para homologación:**")
+    st.write("**Usos de suelo / fundamento considerado para homologación:**")
 
-if regla_csv:
-    st.write(regla_csv.get("fundamento", ""))
-    categorias_mostrar = regla_csv.get("categorias", categorias)
-else:
-    st.write(usos_suelo)
-    categorias_mostrar = categorias
+    if regla_csv:
+        st.write(regla_csv.get("fundamento", ""))
+        categorias_mostrar = regla_csv.get("categorias", categorias)
+    else:
+        st.write(usos_suelo)
+        categorias_mostrar = categorias
 
-st.write("**Categorías consideradas para homologación:**")
-st.success(categorias_mostrar)
+    st.write("**Categorías consideradas para homologación:**")
+    st.success(categorias_mostrar)
 
     # =====================================================
     # 4. CLASIFICACIÓN DS38
@@ -1199,7 +1199,6 @@ st.success(categorias_mostrar)
         '<p class="maab-signature">HOMOLOGADOR · Usos de suelo / Límites Máximos Permisibles · Desarrollado por MAAB</p>',
         unsafe_allow_html=True
     )
-
 
 # =========================================================
 # SESSION STATE
