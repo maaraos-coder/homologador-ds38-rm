@@ -270,9 +270,11 @@ def cargar_tabla_homologacion():
 
 def normalizar_codigo_zona(texto):
     texto = normalizar(texto)
+    texto = texto.replace("zona", "")
     texto = texto.replace(" ", "")
     texto = texto.replace("-", "")
     texto = texto.replace("_", "")
+    texto = texto.replace(".", "")
     return texto
 
 
