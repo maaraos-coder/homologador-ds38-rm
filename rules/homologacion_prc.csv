@@ -167,19 +167,19 @@ Maipu,ZH-10,Habitacional 10,R+Eq+EP+AV,Zona II,60,45,PRC Maipu zona habitacional
 Maipu,ZI-1,Industrial 1,AP+Eq+Inf+EP+AV,Zona III,65,50,PRC Maipu zona industrial con actividades productivas equipamiento e infraestructura; por combinación con equipamiento corresponde Zona III según Res Ex SMA 491/2016.
 Maipu,ZI-2,Industrial 2,AP+Eq+Inf+EP+AV,Zona III,65,50,PRC Maipu zona industrial con actividades productivas equipamiento e infraestructura; por combinación con equipamiento corresponde Zona III según Res Ex SMA 491/2016.
 Maipu,ZI-3,Industrial 3,AP+Eq+Inf+EP+AV,Zona III,65,50,PRC Maipu zona industrial con actividades productivas equipamiento e infraestructura; por combinación con equipamiento corresponde Zona III según Res Ex SMA 491/2016.
-Melipilla,Z-1,Zona Z-1,R+Eq,Zona II,60,45,PRC Melipilla zona central; permite vivienda, equipamiento, comercio, servicios y talleres y almacenamiento inofensivos asimilados a equipamiento.
-Melipilla,Z-2,Zona Z-2,R+Eq+Inf,Zona III,65,50,PRC Melipilla zona residencial mixta; permite vivienda, equipamiento, talleres y almacenamiento inofensivos asimilados a equipamiento y terminales de transporte.
-Melipilla,Z-3,Zona Z-3,R+Eq,Zona II,60,45,PRC Melipilla zona mixta consolidada; permite vivienda, equipamiento, comercio, servicios y talleres y almacenamiento inofensivos asimilados a equipamiento.
-Melipilla,Z-4,Zona Z-4,R+Eq+Inf,Zona III,65,50,PRC Melipilla zona mixta; permite vivienda, equipamiento, comercio, servicios, talleres y almacenamiento inofensivos asimilados a equipamiento y terminales de transporte.
-Melipilla,Z-5,Zona Z-5,R+Eq,Zona II,60,45,PRC Melipilla zona habitacional; permite vivienda, equipamiento menor y talleres y almacenamiento inofensivos asimilados a equipamiento.
-Melipilla,Z-6,Zona Z-6,R,Zona II,60,45,PRC Melipilla zona exclusivamente residencial; sólo permite vivienda.
-Melipilla,ZI-1,Zona ZI-1,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos, almacenamiento inofensivo y molesto, industrias inofensivas e industrias molestas.
-Melipilla,ZI-2,Zona ZI-2,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos, industrias inofensivas, molestas e insalubres.
-Melipilla,ZI-3,Zona ZI-3,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos y almacenamiento inofensivo y molesto.
-Melipilla,ZR1,Zona ZR1,AV,Zona I,55,45,PRC Melipilla zona de restricción por riesgo de asentamientos humanos; sólo permite áreas verdes y forestación.
+Melipilla,Z-1,Zona Z-1,R+Eq,Zona II,60,45,PRC Melipilla zona central; permite vivienda; equipamiento; comercio; servicios; talleres y almacenamiento inofensivos asimilados a equipamiento.
+Melipilla,Z-2,Zona Z-2,R+Eq+Inf,Zona III,65,50,PRC Melipilla zona residencial mixta; permite vivienda; equipamiento; talleres y almacenamiento inofensivos asimilados a equipamiento; terminales de transporte.
+Melipilla,Z-3,Zona Z-3,R+Eq,Zona II,60,45,PRC Melipilla zona mixta consolidada; permite vivienda; equipamiento; comercio; servicios; talleres y almacenamiento inofensivos asimilados a equipamiento.
+Melipilla,Z-4,Zona Z-4,R+Eq+Inf,Zona III,65,50,PRC Melipilla zona mixta; permite vivienda; equipamiento; comercio; servicios; talleres y almacenamiento inofensivos asimilados a equipamiento; terminales de transporte.
+Melipilla,Z-5,Zona Z-5,R+Eq,Zona II,60,45,PRC Melipilla zona habitacional; permite vivienda; equipamiento menor; talleres y almacenamiento inofensivos asimilados a equipamiento.
+Melipilla,Z-6,Zona Z-6,R,Zona II,60,45,PRC Melipilla zona exclusivamente residencial; solo permite vivienda.
+Melipilla,ZI-1,Zona ZI-1,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos; almacenamiento inofensivo y molesto; industrias inofensivas e industrias molestas.
+Melipilla,ZI-2,Zona ZI-2,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos; industrias inofensivas; molestas e insalubres.
+Melipilla,ZI-3,Zona ZI-3,AP,Zona IV,70,70,PRC Melipilla zona industrial; permite talleres artesanales inofensivos y molestos; almacenamiento inofensivo y molesto.
+Melipilla,ZR1,Zona ZR1,AV,Zona I,55,45,PRC Melipilla zona de restricción por riesgo de asentamientos humanos; solo permite áreas verdes y forestación.
 Melipilla,ZR2,Zona ZR2,Inf,Zona IV,70,70,PRC Melipilla zona de restricción ferroviaria; permite exclusivamente infraestructura ferroviaria.
 Melipilla,ZR3,Zona ZR3,Inf,Zona IV,70,70,PRC Melipilla zona de restricción de acueductos y canales de regadío; infraestructura hidráulica.
-Melipilla,ZR4,Zona ZR4,Inf,Zona IV,70,70,PRC Melipilla zona de protección de pozos, filtros, estanques de agua potable y plantas de tratamiento; infraestructura sanitaria.
-Melipilla,ZR5,Zona ZR5,AV+Eq,Zona I,55,45,PRC Melipilla zona de preservación del medio ambiente natural; permite áreas verdes, forestación y recreación con construcciones ligeras.
+Melipilla,ZR4,Zona ZR4,Inf,Zona IV,70,70,PRC Melipilla zona de protección de pozos; filtros; estanques de agua potable y plantas de tratamiento; infraestructura sanitaria.
+Melipilla,ZR5,Zona ZR5,AV+Eq,Zona I,55,45,PRC Melipilla zona de preservación del medio ambiente natural; permite áreas verdes; forestación; recreación con construcciones ligeras.
 Melipilla,ZE-1,Zona ZE-1,Eq,Zona II,60,45,PRC Melipilla zona cementerio; equipamiento especial.
-Melipilla,ZE-2,Zona ZE-2,Eq+AV,Zona II,60,45,PRC Melipilla zona deportiva; permite deporte, recreación y áreas verdes.
+Melipilla,ZE-2,Zona ZE-2,Eq+AV,Zona II,60,45,PRC Melipilla zona deportiva; permite deporte; recreación; áreas verdes.
