@@ -263,20 +263,8 @@ def crear_gdf_vacio():
 @st.cache_data
 def cargar_tabla_homologacion():
     try:
-        import os
-
-        st.write("DEBUG PATH:", TABLA_HOMOLOGACION_PATH)
-        st.write("DEBUG archivo existe:", os.path.exists(TABLA_HOMOLOGACION_PATH))
-
-        df = pd.read_csv(TABLA_HOMOLOGACION_PATH)
-
-        st.success(f"CSV cargado correctamente. Filas: {len(df)}")
-        st.write("DEBUG columnas:", list(df.columns))
-
-        return df
-
-    except Exception as e:
-        st.error(f"ERROR AL CARGAR CSV: {e}")
+        return pd.read_csv(TABLA_HOMOLOGACION_PATH)
+    except Exception:
         return pd.DataFrame()
 
 
@@ -294,7 +282,6 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     tabla = cargar_tabla_homologacion()
 
     if tabla.empty:
-        st.error("DEBUG: La tabla de homologación está vacía o no se pudo cargar.")
         return None
 
     tabla = tabla.copy()
@@ -307,58 +294,32 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar_codigo_zona)
     tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
 
-    st.write("DEBUG comuna recibida:", repr(comuna))
-    st.write("DEBUG zona recibida:", repr(zona_prc))
-    st.write("DEBUG nombre recibido:", repr(nombre_zona))
-
-    st.write("DEBUG comuna normalizada:", repr(comuna_norm))
-    st.write("DEBUG zona normalizada:", repr(zona_norm))
-    st.write("DEBUG nombre normalizado:", repr(nombre_norm))
-
-    st.write("DEBUG primeras filas CSV:")
-    st.dataframe(
-        tabla[["comuna", "zona_prc", "nombre_zona", "categorias", "zona_ds38"]].head(30)
-    )
-
-    # 1) Match ideal: comuna + zona
+    # Match ideal: comuna + zona
     match = tabla[
         (tabla["comuna_norm"] == comuna_norm)
         & (tabla["zona_norm"] == zona_norm)
     ]
 
-    st.write("DEBUG match comuna + zona:", len(match))
-
     if not match.empty:
-        st.success("DEBUG: Match encontrado por comuna + zona")
-        st.dataframe(match[["comuna", "zona_prc", "nombre_zona", "categorias", "zona_ds38", "fundamento"]])
         return match.iloc[0].to_dict()
 
-    # 2) Match alternativo: comuna + nombre
+    # Match alternativo: comuna + nombre
     match = tabla[
         (tabla["comuna_norm"] == comuna_norm)
         & (tabla["nombre_norm"] == nombre_norm)
     ]
 
-    st.write("DEBUG match comuna + nombre:", len(match))
-
     if not match.empty:
-        st.success("DEBUG: Match encontrado por comuna + nombre")
-        st.dataframe(match[["comuna", "zona_prc", "nombre_zona", "categorias", "zona_ds38", "fundamento"]])
         return match.iloc[0].to_dict()
 
-    # 3) Match de respaldo: zona única en CSV
+    # Match de respaldo: zona única
     match = tabla[
         tabla["zona_norm"] == zona_norm
     ]
 
-    st.write("DEBUG match solo zona:", len(match))
-
     if len(match) == 1:
-        st.success("DEBUG: Match encontrado por zona única")
-        st.dataframe(match[["comuna", "zona_prc", "nombre_zona", "categorias", "zona_ds38", "fundamento"]])
         return match.iloc[0].to_dict()
 
-    st.error("DEBUG: No se encontró match en CSV.")
     return None
 
 # =========================================================
@@ -1176,10 +1137,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     st.markdown("## 3. Usos de suelo y categorías consideradas")
 
     st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
-    st.write("**Zona IPT:**", fila.get("ZONA", ""))
-
-    st.write("DEBUG regla_csv:", regla_csv)
-    
+   
     st.write("**Usos de suelo / fundamento considerado para homologación:**")
 
     if regla_csv:
