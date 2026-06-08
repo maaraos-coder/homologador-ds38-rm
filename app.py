@@ -1138,7 +1138,10 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     st.markdown("## 3. Usos de suelo y categorías consideradas")
 
     st.write("**Nombre de la zona según IPT:**", fila.get("NOMBRE", ""))
+    st.write("**Zona IPT:**", fila.get("ZONA", ""))
 
+    st.write("DEBUG regla_csv:", regla_csv)
+    
     st.write("**Usos de suelo / fundamento considerado para homologación:**")
 
     if regla_csv:
