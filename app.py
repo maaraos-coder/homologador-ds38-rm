@@ -983,29 +983,20 @@ def convertir_a_utm(lat, lon):
 
 
 def obtener_usos_desde_regla_o_shape(regla_csv, fila):
-    """
-    Si existe una regla en el CSV, se prioriza la información validada en la tabla maestra.
-    Si el CSV no tiene columna específica de usos, se muestra el fundamento.
-    Solo si no existe regla CSV se usa lo que viene desde el shapefile.
-    """
+    # Si existe homologación manual en CSV, manda el CSV.
+    # No se usa el shape para evitar mostrar usos amplios o erróneos.
     if regla_csv:
-        for campo in [
-            "usos_suelo",
-            "usos_ordenanza",
-            "usos_permitidos",
-            "uso_suelo",
-            "descripcion_usos"
-        ]:
-            valor = str(regla_csv.get(campo, "")).strip()
-            if valor and valor.lower() != "nan":
-                return valor
-
         fundamento = str(regla_csv.get("fundamento", "")).strip()
+
         if fundamento and fundamento.lower() != "nan":
             return fundamento
 
-        return "Información definida en tabla maestra de homologación PRC."
+        categorias_csv = str(regla_csv.get("categorias", "")).strip()
+        nombre_csv = str(regla_csv.get("nombre_zona", "")).strip()
 
+        return f"{nombre_csv}; categorías consideradas: {categorias_csv}"
+
+    # Si no hay regla CSV, recién ahí se usa el shape.
     usos_shape = " ".join([
         str(fila.get("UPREF", "")),
         str(fila.get("UPERM", "")),
@@ -1016,7 +1007,6 @@ def obtener_usos_desde_regla_o_shape(regla_csv, fila):
         usos_shape = texto_atributos(fila)
 
     return usos_shape
-
 
 def nombre_fuente_normativa(fuente):
     if fuente == "PRC":
@@ -1129,7 +1119,10 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     st.write(usos_suelo)
 
     st.write("**Categorías consideradas para homologación:**")
-    st.success(categorias)
+    if regla_csv:
+        st.success(regla_csv.get("categorias", categorias))
+    else:
+        st.success(categorias)
 
     # =====================================================
     # 4. CLASIFICACIÓN DS38
