@@ -294,19 +294,33 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
     tabla["zona_norm"] = tabla["zona_prc"].apply(normalizar_codigo_zona)
     tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
 
+    # 1) Match ideal: comuna + zona
     match = tabla[
         (tabla["comuna_norm"] == comuna_norm)
-        &
-        (
-            (tabla["zona_norm"] == zona_norm)
-            | (tabla["nombre_norm"] == nombre_norm)
-        )
+        & (tabla["zona_norm"] == zona_norm)
     ]
 
-    if match.empty:
-        return None
+    if not match.empty:
+        return match.iloc[0].to_dict()
 
-    return match.iloc[0].to_dict()
+    # 2) Match alternativo: comuna + nombre
+    match = tabla[
+        (tabla["comuna_norm"] == comuna_norm)
+        & (tabla["nombre_norm"] == nombre_norm)
+    ]
+
+    if not match.empty:
+        return match.iloc[0].to_dict()
+
+    # 3) Match de respaldo: zona única en CSV
+    match = tabla[
+        tabla["zona_norm"] == zona_norm
+    ]
+
+    if len(match) == 1:
+        return match.iloc[0].to_dict()
+
+    return None
 
 
 # =========================================================
