@@ -1104,12 +1104,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         return
 
     fila = resultado.iloc[0]
-    
-     zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
+
+    zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
         fila,
         estado_lu
     )
-
 
     regla_csv = homologar_por_tabla_prc(
         fila.get("COMUNA", ""),
@@ -1117,12 +1116,30 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         fila.get("NOMBRE", "")
     )
 
-    # Si no hay coincidencia en la tabla PRC, buscar en la tabla PRMS
     if regla_csv is None:
         regla_csv = homologar_por_tabla_prms(
             fila.get("ZONA", ""),
             fila.get("NOMBRE", "")
         )
+
+    if regla_csv:
+        zona_ds38 = regla_csv.get("zona_ds38", zona_ds38)
+
+        limite_dia_csv = regla_csv.get("limite_dia", limite_dia)
+        limite_noche_csv = regla_csv.get("limite_noche", limite_noche)
+
+        if str(limite_dia_csv).strip().isdigit():
+            limite_dia = f"{limite_dia_csv} dBA"
+        else:
+            limite_dia = limite_dia_csv
+
+        if str(limite_noche_csv).strip().isdigit():
+            limite_noche = f"{limite_noche_csv} dBA"
+        else:
+            limite_noche = limite_noche_csv
+
+        criterio = regla_csv.get("fundamento", criterio)
+        categorias = regla_csv.get("categorias", categorias)
 
     fuente = fila.get("fuente_normativa", "")
     metodo = fila.get("metodo_busqueda", "")
