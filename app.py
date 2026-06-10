@@ -1104,14 +1104,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         return
 
     fila = resultado.iloc[0]
-
-
-st.markdown("### DEBUG PRMS")
-
-for campo in fila.index:
-    st.write(campo, "=", fila[campo])
-
     
+    st.markdown("### DEBUG PRMS")
+
+    for campo in fila.index:
+        st.write(campo, "=", fila[campo])
     zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
         fila,
         estado_lu
