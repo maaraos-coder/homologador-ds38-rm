@@ -1,2 +1,14 @@
 zona_prms,nombre_zona,categorias,zona_ds38,limite_dia,limite_noche,fundamento
 ,Zona Habitacional Mixto,R+Eq+Inf,Zona III,65,50,PRMS Art. 3.1.1.1 Zona Habitacional Mixta; permite uso habitacional mixto; espacio de uso público; actividades productivas inofensivas asimiladas a equipamiento; infraestructura y transporte.
+,Zona Equipamiento Metropolitano,Eq+Inf,Zona III,65,50,PRMS Art. 3.1.1.2 Subcentros de Equipamiento Metropolitano; destinados a equipamiento metropolitano o intercomunal; permite infraestructura de transporte asociada.
+,Zona Interés Metropolitano,Eq+AP+Inf,Zona III,65,50,PRMS Art. 3.1.1.2 Zona de Interés Metropolitano; permite equipamiento; actividades productivas; macroinfraestructura y actividades ligadas al transporte.
+,Zona Actividades Molestas,AP,Zona IV,70,70,PRMS Art. 3.1.1.3 Zona de actividades productivas molestas; permite actividades productivas y de servicio de carácter industrial molestas e inofensivas.
+,Zona Actividades Inofensivas,Eq,Zona II,60,45,PRMS Art. 3.1.1.3 Zona de actividades productivas inofensivas; se asimilan a equipamiento conforme criterio de actividades productivas inofensivas.
+,Área Verde Metropolitana,AV,Zona I,55,45,PRMS Art. 3.1.1.4 Área Verde Metropolitana; uso predominante de área verde; esparcimiento y recreación.
+,Zona Urbanizable con Desarrollo Condicionado,R+Eq+Inf,Zona III,65,50,PRMS Art. 3.3.6 ZUDC; permite usos de zona habitacional mixta; cementerios parque; macroinfraestructura sanitaria energética y telecomunicaciones.
+,Zona Industrial Exclusiva con Desarrollo Condicionado,AP,Zona IV,70,70,PRMS Art. 3.3.7 ZIEDC; zona industrial exclusiva con desarrollo condicionado.
+,Área Restringida o Excluida al Desarrollo Urbano,Rural,Zona Rural,Rf + 10 dBA con tope Zona III,Rf + 10 dBA con tope Zona III,PRMS Art. 2.2.2 Área Restringida o Excluida al Desarrollo Urbano; corresponde evaluar como área rural salvo uso específico permitido.
+,Área de Alto Riesgo para los Asentamientos Humanos,AV,Zona I,55,45,PRMS Título 8 área de alto riesgo; restricción al asentamiento humano; homologación referencial como área de protección sin usos productivos.
+,Área de Valor Natural,AV,Zona I,55,45,PRMS Título 8 área de valor natural; uso predominante de protección ambiental o área verde.
+,Área de Interés Silvoagropecuario,Rural,Zona Rural,Rf + 10 dBA con tope Zona III,Rf + 10 dBA con tope Zona III,PRMS Título 8 área de interés silvoagropecuario; área restringida o excluida al desarrollo urbano.
+,Área de Resguardo de Infraestructura Metropolitana,Inf,Zona IV,70,70,PRMS Título 8 área de resguardo de infraestructura metropolitana; protege infraestructura de transporte; sanitaria; energética o telecomunicaciones.
