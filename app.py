@@ -1182,10 +1182,10 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     if regla_csv:
         st.write(regla_csv.get("fundamento", ""))
-        categorias_mostrar = regla_csv.get("categorias", categorias)
+        categorias_mostrar = regla_csv.get("categorias", "")
     else:
         st.write(usos_suelo)
-        categorias_mostrar = categorias
+        categorias_mostrar = categorias if "categorias" in locals() else ""
 
     st.write("**Categorías consideradas para homologación:**")
     st.success(categorias_mostrar)
