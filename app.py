@@ -187,7 +187,7 @@ st.warning(
 
 ZIP_PATH = "data/IPTMetropolitana.zip"
 TABLA_HOMOLOGACION_PATH = "rules/homologacion_prc.csv"
-
+TABLA_PRMS_PATH = "rules/homologacion_prms.csv"
 
 # =========================================================
 # UTILIDADES
@@ -266,7 +266,13 @@ def cargar_tabla_homologacion():
         return pd.read_csv(TABLA_HOMOLOGACION_PATH)
     except Exception:
         return pd.DataFrame()
-
+        
+@st.cache_data
+def cargar_tabla_prms():
+    try:
+        return pd.read_csv(TABLA_PRMS_PATH)
+    except Exception:
+        return pd.DataFrame()
 
 def normalizar_codigo_zona(texto):
     texto = normalizar(texto)
@@ -1239,6 +1245,19 @@ if st.session_state.comuna_actual != comuna_clave:
 
 comuna_info = indice[comuna_clave]
 
+# =========================================================
+# DEBUG PRMS
+# =========================================================
+
+tabla_prms_debug = cargar_tabla_prms()
+
+st.write("DEBUG PRMS cargado:")
+
+if tabla_prms_debug.empty:
+    st.error("No se cargó homologacion_prms.csv")
+else:
+    st.success(f"PRMS cargado correctamente ({len(tabla_prms_debug)} filas)")
+    st.dataframe(tabla_prms_debug.head(20))
 
 # =========================================================
 # CARGA PRC
