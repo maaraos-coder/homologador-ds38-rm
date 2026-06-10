@@ -1,0 +1,7 @@
+zona_prms,nombre_zona,categorias,zona_ds38,limite_dia,limite_noche,fundamento
+ZHM,Zona Habitacional Mixta,R+Eq+AP+Inf,Zona III,65,50,PRMS Art. 3.1.1.1 permite residencial equipamiento actividades productivas inofensivas infraestructura y transporte.
+ZEM,Zona Equipamiento Metropolitano,Eq+Inf,Zona III,65,50,PRMS Art. 3.1.1.2 destinado a equipamiento metropolitano e infraestructura asociada.
+ZIM,Zona Interés Metropolitano,Eq+AP+Inf,Zona IV,70,70,PRMS Art. 3.1.1.2 permite equipamiento actividades productivas macroinfraestructura y transporte.
+ZAM,Zona Actividades Molestas,AP,Zona IV,70,70,PRMS Art. 3.1.1.3 destinado a actividades productivas molestas e inofensivas.
+ZAI,Zona Actividades Inofensivas,AP,Zona IV,70,70,PRMS Art. 3.1.1.3 actividades productivas inofensivas.
+AVM,Área Verde Metropolitana,AV,Zona I,55,45,PRMS Art. 3.1.1.4 área verde predominante.
