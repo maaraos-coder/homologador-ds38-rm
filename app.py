@@ -1105,7 +1105,11 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     fila = resultado.iloc[0]
     
-   
+     zona_ds38, limite_dia, limite_noche, criterio, categorias = homologar_ds38(
+        fila,
+        estado_lu
+    )
+
 
     regla_csv = homologar_por_tabla_prc(
         fila.get("COMUNA", ""),
