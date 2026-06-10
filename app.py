@@ -327,7 +327,38 @@ def homologar_por_tabla_prc(comuna, zona_prc, nombre_zona):
         return match.iloc[0].to_dict()
 
     return None
+    
+def homologar_por_tabla_prms(zona_prms, nombre_zona):
+    tabla = cargar_tabla_prms()
 
+    if tabla.empty:
+        return None
+
+    tabla = tabla.copy()
+
+    zona_norm = normalizar_codigo_zona(zona_prms)
+    nombre_norm = normalizar(nombre_zona)
+
+    tabla["zona_norm"] = tabla["zona_prms"].apply(normalizar_codigo_zona)
+    tabla["nombre_norm"] = tabla["nombre_zona"].apply(normalizar)
+
+    # Match por código
+    match = tabla[
+        tabla["zona_norm"] == zona_norm
+    ]
+
+    if not match.empty:
+        return match.iloc[0].to_dict()
+
+    # Match por nombre
+    match = tabla[
+        tabla["nombre_norm"] == nombre_norm
+    ]
+
+    if not match.empty:
+        return match.iloc[0].to_dict()
+
+    return None
 # =========================================================
 # LISTAR CAPAS
 # =========================================================
@@ -1079,11 +1110,18 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         estado_lu
     )
 
-    regla_csv = homologar_por_tabla_prc(
+       regla_csv = homologar_por_tabla_prc(
         fila.get("COMUNA", ""),
         fila.get("ZONA", ""),
         fila.get("NOMBRE", "")
     )
+
+    # Si no hay coincidencia en la tabla PRC, buscar en la tabla PRMS
+    if regla_csv is None:
+        regla_csv = homologar_por_tabla_prms(
+            fila.get("ZONA", ""),
+            fila.get("NOMBRE", "")
+        )
 
     fuente = fila.get("fuente_normativa", "")
     metodo = fila.get("metodo_busqueda", "")
@@ -1092,7 +1130,6 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
     utm_e, utm_n = convertir_a_utm(lat, lon)
     usos_suelo = obtener_usos_desde_regla_o_shape(regla_csv, fila)
     fuente_normativa = nombre_fuente_normativa(fuente)
-
     # =====================================================
     # 1. UBICACIÓN TERRITORIAL
     # =====================================================
