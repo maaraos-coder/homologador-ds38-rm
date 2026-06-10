@@ -1110,7 +1110,7 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         estado_lu
     )
 
-       regla_csv = homologar_por_tabla_prc(
+    regla_csv = homologar_por_tabla_prc(
         fila.get("COMUNA", ""),
         fila.get("ZONA", ""),
         fila.get("NOMBRE", "")
