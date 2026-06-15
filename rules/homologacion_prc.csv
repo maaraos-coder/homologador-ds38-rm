@@ -73,21 +73,21 @@ San Bernardo,ZE4,ZE4 Zona de Transferencia de Pasajeros y de Carga,Inf+AP,Zona I
 San Bernardo,ZE5,ZE5 Zona de Cerros Islas y Área Verde,AV,Zona I,55,45,PRC San Bernardo Art.80 áreas verdes.
 San Bernardo,ZE6,ZE6 Inmuebles de Conservación Histórica,EP,Zona II,60,45,PRC San Bernardo Art.81 conservación histórica.
 San Bernardo,ZE7,ZE7 Zona de Derrumbe y Asentamiento de Suelos,EP,Zona I,55,45,PRC San Bernardo Art.82 área de riesgo.
-Recoleta,U-E,U-E Barrio La Vega Barrio Patronato y Ejes Comunales,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte restringidos.
-Recoleta,U-E1,U-E1 Barrio Bellavista,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas y transporte restringido.
-Recoleta,U-E2,U-E2 Parque Tecnologico El Salto,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte.
-Recoleta,U-E3,U-E3 Los Turistas,Eq,Zona II,60,45,PRC Recoleta Art.4.2 permite exclusivamente equipamiento.
-Recoleta,U-H,U-H Area Norte y Oriente,R+Eq,Zona II,60,45,PRC Recoleta Art.4.2 zona preferentemente vivienda sin actividades productivas.
-Recoleta,U-EH,U-EH Mexico Centro,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte restringido.
-Recoleta,Z-S1,Z-S1 Cementerios,Eq,Zona II,60,45,PRC Recoleta zona especial cementerios.
-Recoleta,Z-S2,Z-S2 Regimiento Buin,Inf,Zona III,65,50,PRC Recoleta equipamiento de seguridad e infraestructura militar.
-Recoleta,Z-S3,Z-S3 Monumentos Nacionales,EP+Eq,Zona II,60,45,PRC Recoleta conservación patrimonial y equipamiento.
-Recoleta,Z-S4,Z-S4 Inmuebles y Zonas de Conservacion Historica,EP+Eq,Zona II,60,45,PRC Recoleta conservación histórica.
-Recoleta,Z-S5,Z-S5 Sectores Especiales,EP+Eq,Zona II,60,45,PRC Recoleta sectores especiales patrimoniales.
-Recoleta,Z-S6,Z-S6 Artesanos Tirso de Molina,Eq+AP,Zona III,65,50,PRC Recoleta permite actividad artesanal.
-Recoleta,U-Ea,U-Ea Sector Especial Seccional Entrecerros,R+Eq,Zona II,60,45,PRC Recoleta sector especial residencial y equipamiento.
-Recoleta,Z-R1,Z-R1 Zona No Edificable,AV,Zona I,55,45,PRC Recoleta zona no edificable.
-Recoleta,Z-R2,Z-R2 Zona Edificacion Restringida,AV+EP,Zona I,55,45,PRC Recoleta área de restricción.
+Recoleta,U-E,Barrio La Vega Barrio Patronato y Ejes Comunales,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte restringidos.
+Recoleta,U-E1,Barrio Bellavista,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas y transporte restringido.
+Recoleta,U-E2,Parque Tecnologico El Salto,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte.
+Recoleta,U-E3,Los Turistas,Eq,Zona II,60,45,PRC Recoleta Art.4.2 permite exclusivamente equipamiento.
+Recoleta,U-H,Área Norte y Oriente,R+Eq,Zona II,60,45,PRC Recoleta Art.4.2 zona preferentemente vivienda sin actividades productivas.
+Recoleta,U-EH,Mexico Centro,R+Eq+AP+Inf,Zona III,65,50,PRC Recoleta Art.4.2 permite actividades productivas almacenamiento y transporte restringido.
+Recoleta,Z-S1,Cementerios,Eq,Zona II,60,45,PRC Recoleta zona especial cementerios.
+Recoleta,Z-S2,Regimiento Buin,Inf,Zona III,65,50,PRC Recoleta equipamiento de seguridad e infraestructura militar.
+Recoleta,Z-S3,Monumentos Nacionales,EP+Eq,Zona II,60,45,PRC Recoleta conservación patrimonial y equipamiento.
+Recoleta,Z-S4,Inmuebles y Zonas de Conservacion Historica,EP+Eq,Zona II,60,45,PRC Recoleta conservación histórica.
+Recoleta,Z-S5,Sectores Especiales,EP+Eq,Zona II,60,45,PRC Recoleta sectores especiales patrimoniales.
+Recoleta,Z-S6,Artesanos Tirso de Molina,Eq+AP,Zona III,65,50,PRC Recoleta permite actividad artesanal.
+Recoleta,U-Ea,Sector Especial Seccional Entrecerros,R+Eq,Zona II,60,45,PRC Recoleta sector especial residencial y equipamiento.
+Recoleta,Z-R1,Zona No Edificable,AV,Zona I,55,45,PRC Recoleta zona no edificable.
+Recoleta,Z-R2,Zona Edificacion Restringida,AV+EP,Zona I,55,45,PRC Recoleta área de restricción.
 Ñuñoa,Z-1,Zona Z-1,R+Eq,Zona II,60,45,PRC Ñuñoa Art.25 permite residencial y equipamiento pero prohíbe actividades productivas.
 Ñuñoa,Z-1A,Zona Z-1A,R+Eq,Zona II,60,45,PRC Ñuñoa Art.25 permite residencial y equipamiento pero prohíbe actividades productivas.
 Ñuñoa,Z-1B,Zona Z-1B,R+Eq,Zona II,60,45,PRC Ñuñoa zona residencial con equipamiento.
