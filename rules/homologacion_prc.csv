@@ -183,3 +183,30 @@ Melipilla,ZR4,Zona ZR4,Inf,Zona IV,70,70,PRC Melipilla zona de protección de po
 Melipilla,ZR5,Zona ZR5,AV+Eq,Zona I,55,45,PRC Melipilla zona de preservación del medio ambiente natural; permite áreas verdes; forestación; recreación con construcciones ligeras.
 Melipilla,ZE-1,Zona ZE-1,Eq,Zona II,60,45,PRC Melipilla zona cementerio; equipamiento especial.
 Melipilla,ZE-2,Zona ZE-2,Eq+AV,Zona II,60,45,PRC Melipilla zona deportiva; permite deporte; recreación; áreas verdes.
+Quinta Normal,Zona A,Zona A Preferente Residencial A,R+Eq,Zona II,60,45,PRC Quinta Normal Zona A preferentemente residencial; permite vivienda y equipamiento; prohíbe actividades productivas e infraestructura.
+Quinta Normal,Zona B,Zona B Preferente Residencial B,R+Eq,Zona II,60,45,PRC Quinta Normal Zona B preferentemente residencial; permite vivienda y equipamiento; prohíbe actividades productivas e infraestructura.
+Quinta Normal,Zona C,Zona C Mixta Residencial Equipamiento y Actividades Productivas sin Bodegas,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona C permite vivienda equipamiento actividades productivas compatibles área verde y espacio público; prohíbe industrias peligrosas y bodegas.
+Quinta Normal,Zona D,Zona D Mixta Residencial Equipamiento y Actividades Productivas,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona D permite vivienda equipamiento actividades productivas compatibles área verde y espacio público; prohíbe industrias peligrosas.
+Quinta Normal,Zona E,Zona E Mixta Residencial Equipamiento y Actividades Productivas,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona E permite vivienda equipamiento actividades productivas compatibles área verde y espacio público; prohíbe industrias peligrosas.
+Quinta Normal,Zona F,Zona F Mixta Residencial y Equipamiento,R+Eq+AV+EP,Zona II,60,45,PRC Quinta Normal Zona F permite vivienda equipamiento área verde y espacio público; prohíbe actividades productivas.
+Quinta Normal,Zona G,Zona G Influencia Gruta de Lourdes,R+Eq+AV+EP,Zona II,60,45,PRC Quinta Normal Zona G permite vivienda equipamiento área verde y espacio público; prohíbe actividades productivas.
+Quinta Normal,Zona H,Zona H Mixta Residencial Equipamiento con Menor Grado de Actividades Productivas,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona H permite vivienda equipamiento y actividades productivas restringidas; área verde y espacio público.
+Quinta Normal,Zona I,Zona I Eje Preferente de Equipamiento Comercio y Servicios I,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona I permite vivienda equipamiento comercio servicios actividades productivas compatibles área verde y espacio público.
+Quinta Normal,Zona J,Zona J Eje Preferente de Equipamiento Comercio y Servicios,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona J permite vivienda equipamiento comercio servicios actividades productivas compatibles área verde y espacio público.
+Quinta Normal,Zona K,Zona K Eje Preferente de Equipamiento Comercio y Servicios,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona K permite vivienda equipamiento comercio servicios actividades productivas compatibles área verde y espacio público.
+Quinta Normal,Zona L,Zona L Mixta Residencial Equipamiento con Menor Grado de Actividades Productivas,R+Eq+AP+AV+EP,Zona III,65,50,PRC Quinta Normal Zona L permite vivienda equipamiento y actividades productivas restringidas; área verde y espacio público.
+Quinta Normal,Zona M,Zona M Equipamiento,Eq,Zona II,60,45,PRC Quinta Normal Zona M destinada exclusivamente a equipamiento; prohíbe vivienda y actividades productivas.
+Quinta Normal,Zona N,Zona N Mixta Residencial y Equipamiento,R+Eq,Zona II,60,45,PRC Quinta Normal Zona N permite vivienda y equipamiento; prohíbe actividades productivas.
+Quinta Normal,Zona O,Zona O Mixta Industrial y Equipamiento,Eq+AP,Zona III,65,50,PRC Quinta Normal Zona O permite equipamiento y actividades productivas compatibles; prohíbe uso residencial.
+Quinta Normal,Zona IE,Zona IE Infraestructura Energética,Inf,Zona III,65,50,PRC Quinta Normal Zona especial destinada a infraestructura energética.
+Quinta Normal,Zona IT,Zona IT Infraestructura Transporte Ferroviario,Inf,Zona III,65,50,PRC Quinta Normal Zona especial destinada a infraestructura ferroviaria.
+Quinta Normal,ZCH-1,Zona de Conservacion Historica Simon Bolivar,R+Eq+EP,Zona II,60,45,PRC Quinta Normal zona de conservación histórica.
+Quinta Normal,ZCH-2,Zona de Conservacion Historica El Poligono,R+Eq+EP,Zona II,60,45,PRC Quinta Normal zona de conservación histórica.
+Quinta Normal,ZCH-3,Zona de Conservacion Historica Mapocho,R+Eq+EP,Zona II,60,45,PRC Quinta Normal zona de conservación histórica.
+Quinta Normal,ICH-1,Inmueble de Conservacion Historica Basilica de Lourdes,Eq+EP,Zona II,60,45,PRC Quinta Normal inmueble de conservación histórica.
+Quinta Normal,ICH-2,Inmueble de Conservacion Historica Lourdes 640,Eq+EP,Zona II,60,45,PRC Quinta Normal inmueble de conservación histórica.
+Quinta Normal,ICH-3,Inmueble de Conservacion Historica Mapocho 4951,Eq+EP,Zona II,60,45,PRC Quinta Normal inmueble de conservación histórica.
+Quinta Normal,PM,Parque Metropolitano,AV,Zona I,55,45,PRC Quinta Normal parque metropolitano.
+Quinta Normal,PI,Parque Intercomunal,AV,Zona I,55,45,PRC Quinta Normal parque intercomunal.
+Quinta Normal,AVP,Plaza,AV,Zona I,55,45,PRC Quinta Normal área verde pública.
+Quinta Normal,ARDU,Areas Restringidas al Desarrollo Urbano,AV+EP,Zona I,55,45,PRC Quinta Normal área restringida al desarrollo urbano.
