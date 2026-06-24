@@ -1532,9 +1532,6 @@ st.success(
 )
 
 
-
-
-
 # =========================================================
 # TOLERANCIA
 # =========================================================
@@ -1546,89 +1543,6 @@ tolerancia_m = st.selectbox(
     [0, 25, 50, 100, 150, 200],
     index=2
 )
-
-
-# =========================================================
-# GPS / UBICACIÓN ACTUAL
-# =========================================================
-
-st.subheader("📍 Ubicación actual del dispositivo")
-
-st.info(
-    "Puedes usar la ubicación GPS del celular o computador. "
-    "El navegador solicitará permiso antes de compartir la ubicación. "
-    "Al detectarse el punto, HOMOLOGADOR intentará cambiar automáticamente la comuna."
-)
-
-col_gps1, col_gps2 = st.columns([2, 1])
-
-with col_gps1:
-    solicitar_gps_auto = st.toggle(
-        "Solicitar GPS automáticamente al abrir",
-        value=st.session_state.auto_gps_on_load
-    )
-    st.session_state.auto_gps_on_load = solicitar_gps_auto
-
-with col_gps2:
-    boton_gps = st.button("📍 Detectar ubicación actual")
-
-if get_geolocation is None:
-    st.warning(
-        "Para activar GPS instala `streamlit-js-eval` en requirements.txt."
-    )
-else:
-    if solicitar_gps_auto or boton_gps:
-        ubicacion = get_geolocation()
-
-        if ubicacion and "coords" in ubicacion:
-            lat_gps = ubicacion["coords"].get("latitude")
-            lon_gps = ubicacion["coords"].get("longitude")
-            precision = ubicacion["coords"].get("accuracy")
-
-            if lat_gps is not None and lon_gps is not None:
-                lat_gps = float(lat_gps)
-                lon_gps = float(lon_gps)
-
-                st.session_state.lat = lat_gps
-                st.session_state.lon = lon_gps
-                st.session_state.gps_precision_m = precision
-
-                with st.spinner("Detectando comuna del punto GPS..."):
-                    comuna_gps = detectar_comuna_por_punto(
-                        lat_gps,
-                        lon_gps,
-                        indice,
-                        gdf_prms_uso_total
-                    )
-
-                if comuna_gps and comuna_gps in indice:
-                    comuna_anterior = st.session_state.get("comuna_actual")
-
-                    st.session_state.comuna_actual = comuna_gps
-                    st.session_state.comuna_selector = comuna_gps
-
-                    st.success(
-                        f"Ubicación GPS detectada. Comuna detectada automáticamente: {indice[comuna_gps]['nombre']}."
-                    )
-
-                    if precision:
-                        st.caption(f"Precisión GPS aproximada: {round(float(precision), 1)} m.")
-
-                    if comuna_anterior != comuna_gps:
-                        st.rerun()
-
-                else:
-                    st.warning(
-                        "Ubicación GPS detectada, pero no se pudo detectar automáticamente la comuna. "
-                        "Selecciona la comuna manualmente."
-                    )
-
-        else:
-            st.caption(
-                "Esperando autorización del navegador o señal GPS. "
-                "Si no aparece el permiso, revisa la configuración de ubicación del navegador."
-            )
-
 
 # =========================================================
 # BUSCADOR DIRECCIÓN
@@ -1683,7 +1597,7 @@ if st.button("Buscar dirección y homologar"):
 # PEGAR COORDENADAS DESDE GOOGLE MAPS
 # =========================================================
 
-st.subheader("Pegar coordenadas desde Google Maps")
+st.subheader("📍Pegar coordenadas desde Google Maps")
 
 st.caption(
     "Copia las coordenadas desde Google Maps y pégalas aquí. "
