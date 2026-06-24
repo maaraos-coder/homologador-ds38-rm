@@ -7,4 +7,3 @@ shapely
 geopy
 pyogrio
 openpyxl
-streamlit-js-eval
