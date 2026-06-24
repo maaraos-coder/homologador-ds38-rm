@@ -1523,7 +1523,7 @@ if st.session_state.comuna_actual != comuna_clave:
 comuna_info = indice[st.session_state.comuna_actual]
 
 st.info(
-    "⚠️ IMPORTANTE: primero seleccione la comuna donde se ubica el proyecto o fuente emisora. "
+    "⚠️ IMPORTANTE: primero seleccione la comuna donde se ubica el receptor. "
     "Luego busque la dirección, pegue coordenadas de Google Maps o seleccione el punto en el mapa. "
     "La homologación usa prioritariamente el PRC de la comuna seleccionada; si la comuna no corresponde, el resultado puede ser incorrecto."
 )
