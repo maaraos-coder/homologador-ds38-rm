@@ -210,3 +210,30 @@ Quinta Normal,PM,Parque Metropolitano,AV,Zona I,55,45,PRC Quinta Normal parque m
 Quinta Normal,PI,Parque Intercomunal,AV,Zona I,55,45,PRC Quinta Normal parque intercomunal.
 Quinta Normal,AVP,Plaza,AV,Zona I,55,45,PRC Quinta Normal área verde pública.
 Quinta Normal,ARDU,Areas Restringidas al Desarrollo Urbano,AV+EP,Zona I,55,45,PRC Quinta Normal área restringida al desarrollo urbano.
+Pedro Aguirre Cerda,ZR1,Zona Residencial Mixta 1,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR1 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR2,Zona Residencial Mixta 2,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR2 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR3,Zona Residencial Mixta 3,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR3 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR4,Zona Residencial Mixta 4,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR4 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR5,Zona Residencial Mixta 5,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR5 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR6,Zona Residencial Mixta 6,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR6 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR7,Zona Residencial Mixta 7,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR7 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR8,Zona Residencial Mixta 8,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR8 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR9,Zona Residencial Mixta 9,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR9 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR10,Zona Residencial Mixta 10,R+Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZR10 permite vivienda equipamiento espacio público y áreas verdes; prohíbe actividades productivas.
+Pedro Aguirre Cerda,ZR11,Zona Mixta Residencial Productiva 11,R+Eq+AP+AV+EP,Zona III,65,50,PRC Pedro Aguirre Cerda ZR11 permite vivienda equipamiento actividades productivas inofensivas espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE1,Zona de Equipamiento 1,Eq+AP+AV+EP,Zona III,65,50,PRC Pedro Aguirre Cerda ZE1 permite equipamiento y bodegas calificadas como inofensivas además de espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE2,Zona de Equipamiento 2,Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZE2 destinada principalmente a equipamiento con espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE2M,Zona de Equipamiento 2M,Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZE2M destinada principalmente a equipamiento con espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE2LV,Zona de Equipamiento 2LV,Eq+AP+AV+EP,Zona III,65,50,PRC Pedro Aguirre Cerda ZE2LV permite equipamiento y actividades productivas inofensivas o molestas además de espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE3,Zona de Equipamiento 3,Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZE3 destinada principalmente a equipamiento con espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE3M,Zona de Equipamiento 3M,Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZE3M destinada principalmente a equipamiento con espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZE4,Zona de Equipamiento 4,Eq+AV+EP,Zona II,60,45,PRC Pedro Aguirre Cerda ZE4 destinada exclusivamente a equipamiento espacio público y áreas verdes.
+Pedro Aguirre Cerda,ZAP1,Zona de Actividad Productiva Molesta,AP+Eq+AV+EP,Zona IV,70,70,PRC Pedro Aguirre Cerda ZAP1 permite industrias almacenamiento y actividades productivas calificadas como molestas además de equipamiento y áreas verdes.
+Pedro Aguirre Cerda,ZI1,Zona de Infraestructura Energetica,Inf+Eq+AV+EP,Zona IV,70,70,PRC Pedro Aguirre Cerda ZI1 destinada a infraestructura energética y equipamiento asociado.
+Pedro Aguirre Cerda,ZI2,Zona de Infraestructura Sanitaria,Inf+Eq+AV+EP,Zona IV,70,70,PRC Pedro Aguirre Cerda ZI2 destinada a infraestructura sanitaria y equipamiento asociado.
+Pedro Aguirre Cerda,AVI1,Parques BUPI Intercomunales,AV,Zona I,55,45,PRC Pedro Aguirre Cerda parque intercomunal y área verde.
+Pedro Aguirre Cerda,AVI2,Parques DUP Intercomunales,AV,Zona I,55,45,PRC Pedro Aguirre Cerda parque intercomunal y área verde.
+Pedro Aguirre Cerda,AVI3,Areas Verdes Asociadas a Pozos Extractivos,AV,Zona I,55,45,PRC Pedro Aguirre Cerda área verde asociada a pozos extractivos.
+Pedro Aguirre Cerda,AV1,Espacio Publico Plazas Parques y Areas Verdes BUPI,AV+EP,Zona I,55,45,PRC Pedro Aguirre Cerda espacio público plazas parques y áreas verdes.
+Pedro Aguirre Cerda,AV2,Parques y Plazas DUP,AV,Zona I,55,45,PRC Pedro Aguirre Cerda parques y plazas declarados de utilidad pública.
+Pedro Aguirre Cerda,AV3,Areas Verdes,AV,Zona I,55,45,PRC Pedro Aguirre Cerda áreas verdes.
