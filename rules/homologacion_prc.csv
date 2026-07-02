@@ -237,43 +237,44 @@ Pedro Aguirre Cerda,AVI3,Areas Verdes Asociadas a Pozos Extractivos,AV,Zona I,55
 Pedro Aguirre Cerda,AV1,Espacio Publico Plazas Parques y Areas Verdes BUPI,AV+EP,Zona I,55,45,PRC Pedro Aguirre Cerda espacio público plazas parques y áreas verdes.
 Pedro Aguirre Cerda,AV2,Parques y Plazas DUP,AV,Zona I,55,45,PRC Pedro Aguirre Cerda parques y plazas declarados de utilidad pública.
 Pedro Aguirre Cerda,AV3,Areas Verdes,AV,Zona I,55,45,PRC Pedro Aguirre Cerda áreas verdes.
-La Florida,U-VEV1,U-VEV1 Uso Preferente Vivienda y Equipamiento N°1,R+Eq,Zona II,60,45,PRC La Florida zona de vivienda y equipamiento vecinal.
-La Florida,U-VEV2,U-VEV2 Uso Preferente Vivienda y Equipamiento N°2,R+Eq,Zona II,60,45,PRC La Florida zona de vivienda y equipamiento vecinal.
-La Florida,U-VEV3,U-VEV3 Zona de Vivienda y Equipamiento Vecinal N°3,R+Eq,Zona II,60,45,PRC La Florida zona de vivienda y equipamiento vecinal.
-La Florida,U-VEV4,U-VEV4 Zona de Vivienda y Equipamiento Vecinal N°4,R+Eq,Zona II,60,45,PRC La Florida zona de vivienda y equipamiento vecinal.
-La Florida,U-EC1,U-EC1 Zona de Equipamiento Comunal N°1,Eq,Zona II,60,45,PRC La Florida zona de equipamiento comunal.
-La Florida,U-EC3,U-EC3 Zona de Equipamiento Comunal N°3,Eq,Zona II,60,45,PRC La Florida zona de equipamiento comunal.
-La Florida,U-EC4,U-EC4 Zona de Equipamiento Comunal N°4,Eq,Zona II,60,45,PRC La Florida zona de equipamiento intercomunal.
-La Florida,Z-AM,Z-AM Zona de Edificación Aislada de Altura Media,R+Eq,Zona II,60,45,PRC La Florida zona residencial de altura media.
-La Florida,Z-AA1,Z-AA1 Zona de Edificación Aislada Alta,R+Eq,Zona III,65,50,PRC La Florida zona residencial de alta densidad con equipamiento.
-La Florida,Z-AA2,Z-AA2 Zona de Transición A Edificación Aislada Alta,R+Eq,Zona III,65,50,PRC La Florida zona residencial de transición de alta densidad.
-La Florida,Z-AA+CM,Z-AA+CM Zona de Edificación Aislada Alta con Continuidad Media,R+Eq+AP,Zona III,65,50,PRC La Florida sector centro con usos mixtos y equipamiento.
-La Florida,Z-AA+CB/CM,Z-AA+CB/CM Zona de Edificación Aislada Alta con Continuidad Baja y Media,R+Eq+AP,Zona III,65,50,PRC La Florida sector centro con usos mixtos y equipamiento.
-La Florida,ZRM-DT,Zona Residencial Mixta Departamental Tobalaba,R+Eq+AP,Zona III,65,50,PRC La Florida zona residencial mixta Departamental Tobalaba.
-La Florida,AV1.1,AV1.1 Zona de Parque Isabel Riquelme,AV,Zona I,55,45,PRC La Florida parque y área verde.
-La Florida,AV1.2,AV1.2 Zona de Parque El Panul,AV,Zona I,55,45,PRC La Florida parque y área verde.
-La Florida,AV1.3,AV1.3 Zona de Parque La Salle,AV,Zona I,55,45,PRC La Florida parque y área verde.
-La Florida,AV2,AV2 Zona Cerros Islas,AV,Zona I,55,45,PRC La Florida cerros isla y áreas verdes.
-La Florida,AV4,AV4 Avenidas Parques,AV,Zona I,55,45,PRC La Florida avenidas parque y áreas verdes.
-La Florida,PL,PL Zona de Plazas,AV+EP,Zona I,55,45,PRC La Florida plazas y espacio público.
-La Florida,ESP-1,ESP-1 Zona Especial Manzana Cívica,Eq,Zona II,60,45,PRC La Florida manzana cívica y equipamiento.
-La Florida,ESP-2,ESP-2 Zona Terrenos Consultorios,Eq,Zona II,60,45,PRC La Florida equipamiento de salud.
-La Florida,ESP-3,ESP-3 Zona Terrenos Congregación Salesiana Lo Cañas,Eq,Zona II,60,45,PRC La Florida equipamiento educacional y religioso.
-La Florida,ESP-4,ESP-4 Precordillera,AV+EP,Zona I,55,45,PRC La Florida zona especial precordillerana.
-La Florida,RI,RI Zona de Resguardo de Infraestructura,Inf,Zona IV,70,70,PRC La Florida infraestructura.
-La Florida,RI-1,RI-1 Zona Terminales Rodoviarios de Locomoción Colectiva Urbana,Inf,Zona IV,70,70,PRC La Florida terminales rodoviarios.
-La Florida,RI-2,RI-2 Zona de Infraestructura Sanitaria y Energética,Inf,Zona IV,70,70,PRC La Florida infraestructura sanitaria y energética.
-La Florida,R-1/AV3,R-1/AV3 Zona de Restricción por Quebradas Parques Quebradas,AV,Zona I,55,45,PRC La Florida restricción por quebradas.
-La Florida,R-2/AV4,R-2/AV4 Zona de Restricción por Canales Avenidas Parque,AV,Zona I,55,45,PRC La Florida restricción por canales.
-La Florida,R-3/AV5,R-3/AV5 Zona de Riesgo por Derrumbe y Asentamiento de Suelo Área Verde Ex Pozo de Áridos,AV,Zona I,55,45,PRC La Florida zona de riesgo y área verde.
-La Florida,R-4,R-4 Zona de Riesgo Geofísico Asociado A Remoción En Masa,AV,Zona I,55,45,PRC La Florida zona de riesgo geofísico.
-La Florida,R-5/AV6,R-5/AV6 Zona de Restricción por Pendiente Área Verde en Zona de Pendiente,AV,Zona I,55,45,PRC La Florida restricción por pendiente.
-La Florida,PEDC-3,PEDC-3 Zona de Protección Ecológica con Desarrollo Controlado,AV+EP,Zona I,55,45,PRC La Florida protección ecológica.
-La Florida,ED-1,ED-1 Estadio Entel,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-2,ED-2 Zona Balneario Municipal,Eq+AV,Zona II,60,45,PRC La Florida recinto recreacional.
-La Florida,ED-3,ED-3 Estadio Contraloría General de la República,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-4,ED-4 Estadio Caja de Compensación La Araucana,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-6,ED-6 Estadio Municipal de La Florida Audax Italiano,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-8,ED-8 Complejo Deportivo Estrella Manuel Rodríguez,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-9,ED-9 Deportivo Bayer,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
-La Florida,ED-11,ED-11 Complejo Deportivo Gabriela Mistral,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo.
+La Florida,U-VEV1,U-VEV1 Uso preferente vivienda y equipamiento vecinal 1,R+Eq+Inf+AV+EP,Zona III,65,50,PRC La Florida U-VEV1 permite residencial equipamiento infraestructura de transporte espacio público y áreas verdes.
+La Florida,U-VEV2,U-VEV2 Uso preferente vivienda y equipamiento vecinal 2,R+Eq+Inf+AV+EP,Zona III,65,50,PRC La Florida U-VEV2 permite residencial equipamiento infraestructura de transporte espacio público y áreas verdes.
+La Florida,U-VEV3,U-VEV3 Uso preferente vivienda y equipamiento vecinal 3,R+Eq+Inf+AV+EP,Zona III,65,50,PRC La Florida U-VEV3 permite residencial equipamiento infraestructura sanitaria energética transporte espacio público y áreas verdes.
+La Florida,U-VEV4,U-VEV4 Uso preferente vivienda y equipamiento vecinal 4,R+Eq+Inf+AV+EP,Zona III,65,50,PRC La Florida U-VEV4 permite residencial equipamiento infraestructura sanitaria energética transporte espacio público y áreas verdes.
+La Florida,U-EC1,U-EC1 Uso preferente equipamiento comunal 1,R+Eq+AP+Inf+AV+EP,Zona III,65,50,PRC La Florida U-EC1 permite residencial equipamiento actividades productivas e infraestructura.
+La Florida,U-EC3,U-EC3 Uso preferente equipamiento comunal 3,R+Eq+Inf+AV+EP,Zona III,65,50,PRC La Florida U-EC3 permite residencial equipamiento infraestructura sanitaria energética y transporte.
+La Florida,U-EC4,U-EC4 Uso preferente equipamiento intercomunal 4,R+Eq+AP+Inf+AV+EP,Zona III,65,50,PRC La Florida U-EC4 permite residencial equipamiento actividades productivas e infraestructura.
+La Florida,Z-AM,Zona de Edificación Aislada de Altura Media,R+Eq,Zona II,60,45,PRC La Florida zona predominantemente residencial con equipamiento.
+La Florida,Z-AA1,Zona de Edificación Aislada Alta,R+Eq,Zona II,60,45,PRC La Florida zona residencial de alta densidad y equipamiento.
+La Florida,Z-AA2,Zona de Transición a Edificación Aislada Alta,R+Eq,Zona II,60,45,PRC La Florida zona residencial de transición y equipamiento.
+La Florida,Z-AA+CM,Zona de Edificación Aislada Alta con Continuidad Media,R+Eq+AP,Zona III,65,50,PRC La Florida sector centro de usos mixtos y actividades productivas compatibles.
+La Florida,Z-AA+CB/CM,Zona de Edificación Aislada Alta con Continuidad Baja y Media,R+Eq+AP,Zona III,65,50,PRC La Florida sector centro de usos mixtos y actividades productivas compatibles.
+La Florida,AV1.1,Parque Intercomunal,AV,Zona I,55,45,PRC La Florida parque intercomunal y área verde.
+La Florida,AV1.2,Parque Intercomunal,AV,Zona I,55,45,PRC La Florida parque intercomunal y área verde.
+La Florida,AV1.3,Parque Intercomunal,AV,Zona I,55,45,PRC La Florida parque intercomunal y área verde.
+La Florida,AV2,Cerros Islas,AV,Zona I,55,45,PRC La Florida cerros islas y áreas verdes.
+La Florida,AV3,Parques Quebradas,AV,Zona I,55,45,PRC La Florida parques quebradas y áreas verdes.
+La Florida,AV4,Avenidas Parque,AV,Zona I,55,45,PRC La Florida avenidas parque y áreas verdes.
+La Florida,AV5,Área Verde Ex Pozo de Áridos,AV,Zona I,55,45,PRC La Florida área verde ex pozo de áridos.
+La Florida,AV6,Área Verde Zona en Pendiente,AV,Zona I,55,45,PRC La Florida área verde en zona de pendiente.
+La Florida,ESP-1,Manzana Cívica,Eq,Zona II,60,45,PRC La Florida manzana cívica destinada a equipamiento.
+La Florida,ESP-2,Terrenos Consultorio,Eq,Zona II,60,45,PRC La Florida equipamiento de salud.
+La Florida,ESP-3,Congregación Salesiana Lo Cañas,Eq,Zona II,60,45,PRC La Florida equipamiento educacional y religioso.
+La Florida,ESP-4,Precordillera,AV+EP,Zona I,55,45,PRC La Florida zona especial de protección precordillerana.
+La Florida,RI-1,Terminales Rodoviarios,Inf,Zona IV,70,70,PRC La Florida infraestructura de transporte.
+La Florida,RI-2,Infraestructura Sanitaria y Energética,Inf,Zona IV,70,70,PRC La Florida infraestructura sanitaria y energética.
+La Florida,R-1,Zona de Restricción por Quebradas,AV,Zona I,55,45,PRC La Florida zona de restricción por quebradas.
+La Florida,R-2,Zona de Restricción por Canales,AV,Zona I,55,45,PRC La Florida zona de restricción por canales.
+La Florida,R-3,Zona de Riesgo por Derrumbe y Asentamiento de Suelo,AV,Zona I,55,45,PRC La Florida zona de riesgo por derrumbe y asentamiento.
+La Florida,R-4,Zona de Riesgo Geofísico Asociado a Remoción en Masa,AV,Zona I,55,45,PRC La Florida zona de riesgo geofísico.
+La Florida,R-5,Zona de Restricción por Pendiente,AV,Zona I,55,45,PRC La Florida zona de restricción por pendiente.
+La Florida,PEDC-3,Protección Ecológica con Desarrollo Controlado,AV+EP,Zona I,55,45,PRC La Florida zona de protección ecológica.
+La Florida,PL,Plazas,AV+EP,Zona I,55,45,PRC La Florida plazas y espacio público.
+La Florida,ED-1,Estadio Entel,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-2,Balneario Municipal,Eq+AV,Zona II,60,45,PRC La Florida recinto recreacional y áreas verdes.
+La Florida,ED-3,Estadio Contraloría General de la República,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-4,Estadio Caja de Compensación La Araucana,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-6,Estadio Municipal de La Florida Audax Italiano,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-8,Complejo Deportivo Estrella Manuel Rodríguez,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-9,Deportivo Bayer,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
+La Florida,ED-11,Complejo Deportivo Gabriela Mistral,Eq+AV,Zona II,60,45,PRC La Florida recinto deportivo y áreas verdes.
