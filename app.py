@@ -277,6 +277,8 @@ st.warning(
 ZIP_PATH = "data/IPTMetropolitana.zip"
 TABLA_HOMOLOGACION_PATH = "rules/homologacion_prc.csv"
 TABLA_PRMS_PATH = "rules/homologacion_prms.csv"
+TABLA_PUENTE_ALTO_PATH = "rules/homologacion_puente_alto.csv"
+PUENTE_ALTO_LOCAL_SHP = "data/PRC_Puente_Alto/IPT_13_PRC_Puente_Alto.shp"
 
 # =========================================================
 # UTILIDADES
@@ -402,10 +404,46 @@ def crear_gdf_vacio():
 
 @st.cache_data
 def cargar_tabla_homologacion():
+    """
+    Carga la tabla maestra y aplica parches comunales adicionales si existen.
+    El archivo de Puente Alto se superpone a cualquier fila antigua de la misma
+    comuna/zona sin modificar el CSV maestro existente.
+    """
     try:
-        return pd.read_csv(TABLA_HOMOLOGACION_PATH)
+        tabla = pd.read_csv(TABLA_HOMOLOGACION_PATH)
     except Exception:
-        return pd.DataFrame()
+        tabla = pd.DataFrame()
+
+    if os.path.exists(TABLA_PUENTE_ALTO_PATH):
+        try:
+            parche = pd.read_csv(TABLA_PUENTE_ALTO_PATH)
+            if not parche.empty:
+                if tabla.empty:
+                    tabla = parche.copy()
+                else:
+                    # El parche manda sobre registros antiguos de Puente Alto.
+                    claves_parche = set(
+                        zip(
+                            parche["comuna"].map(normalizar),
+                            parche["zona_prc"].map(normalizar_codigo_zona),
+                        )
+                    )
+                    mascara_conservar = []
+                    for _, fila in tabla.iterrows():
+                        clave = (
+                            normalizar(fila.get("comuna", "")),
+                            normalizar_codigo_zona(fila.get("zona_prc", "")),
+                        )
+                        mascara_conservar.append(clave not in claves_parche)
+
+                    tabla = pd.concat(
+                        [tabla.loc[mascara_conservar], parche],
+                        ignore_index=True
+                    )
+        except Exception:
+            pass
+
+    return tabla
         
 @st.cache_data
 def cargar_tabla_prms():
@@ -686,6 +724,35 @@ def cargar_shp(shp):
     return gdf
 
 
+@st.cache_data(show_spinner=False)
+def cargar_prc_puente_alto_local():
+    """
+    Carga exclusivamente el shapefile local actualizado de Puente Alto.
+    La app no consulta ArcGIS ni otro servicio externo en tiempo de ejecución.
+    El archivo esperado es:
+      data/PRC_Puente_Alto/IPT_13_PRC_Puente_Alto.shp
+    """
+    try:
+        if not os.path.exists(PUENTE_ALTO_LOCAL_SHP):
+            return crear_gdf_vacio()
+
+        gdf = gpd.read_file(PUENTE_ALTO_LOCAL_SHP)
+        if gdf.empty:
+            return crear_gdf_vacio()
+
+        if gdf.crs is None:
+            # La capa oficial publicada está en Web Mercator; el .prj local
+            # debería definirlo. Este fallback evita fallar si faltara el CRS.
+            gdf = gdf.set_crs(epsg=3857, allow_override=True)
+
+        gdf = gdf.to_crs(epsg=4326)
+        gdf["archivo_origen"] = "PRC Puente Alto local · referencia 2026-04-30"
+        return gdf
+
+    except Exception:
+        return crear_gdf_vacio()
+
+
 def normalizar_columnas(gdf):
     if gdf.empty:
         return crear_gdf_vacio()
@@ -704,7 +771,14 @@ def normalizar_columnas(gdf):
         "DESTINO": "UPERM",
         "NOM_USO": "NOMBRE",
         "TIPO": "NOMBRE",
-        "CLASE": "NOMBRE"
+        "CLASE": "NOMBRE",
+        "comuna": "COMUNA",
+        "zona": "ZONA",
+        "nombre": "NOMBRE",
+        "uperm": "UPERM",
+        "upref": "UPREF",
+        "uproh": "UPROH",
+        "sector": "SECTOR"
     }
 
     gdf = gdf.rename(columns=renombres)
@@ -1053,6 +1127,36 @@ def homologar_por_tabla_sma491(categorias):
     )
 
 
+def _texto_valido(valor):
+    if valor is None or pd.isna(valor):
+        return ""
+    texto = str(valor).strip()
+    return "" if texto.lower() == "nan" else texto
+
+
+def _es_regla_revision(regla):
+    if not regla:
+        return False
+    zona = _texto_valido(regla.get("zona_ds38", "")).upper()
+    categorias = _texto_valido(regla.get("categorias", "")).upper()
+    return zona == "REVISAR" or categorias == "REVISAR"
+
+
+def _formatear_limite(valor):
+    texto = _texto_valido(valor)
+    if not texto:
+        return "—"
+    if "dba" in texto.lower():
+        return texto
+    try:
+        numero = float(texto)
+        if numero.is_integer():
+            return f"{int(numero)} dBA"
+        return f"{numero:g} dBA"
+    except Exception:
+        return texto
+
+
 def homologar_ds38(fila, estado_lu=None):
     if estado_lu == "Fuera de límite urbano PRMS / área rural":
         return (
@@ -1067,26 +1171,36 @@ def homologar_ds38(fila, estado_lu=None):
     zona_prc = fila.get("ZONA", "")
     nombre_zona = fila.get("NOMBRE", "")
 
-    regla = homologar_por_tabla_prc(
-        comuna,
-        zona_prc,
-        nombre_zona
-    )
+    regla = homologar_por_tabla_prc(comuna, zona_prc, nombre_zona)
 
     if regla:
+        fundamento = _texto_valido(regla.get("fundamento", ""))
+
+        if _es_regla_revision(regla):
+            if not fundamento:
+                fundamento = (
+                    "La normativa aplicable no permite efectuar una homologación automática. "
+                    "Se requiere revisión del instrumento y de sus antecedentes normativos específicos."
+                )
+            return (
+                "Revisión requerida",
+                "—",
+                "—",
+                fundamento,
+                "Revisión normativa"
+            )
+
         return (
-            regla["zona_ds38"],
-            f'{regla["limite_dia"]} dBA',
-            f'{regla["limite_noche"]} dBA',
-            regla["fundamento"],
-            regla["categorias"]
+            _texto_valido(regla.get("zona_ds38", "")) or "No clasificada",
+            _formatear_limite(regla.get("limite_dia", "")),
+            _formatear_limite(regla.get("limite_noche", "")),
+            fundamento,
+            _texto_valido(regla.get("categorias", ""))
         )
 
     categorias = detectar_categorias_oguc(fila)
     zona, dia, noche, criterio = homologar_por_tabla_sma491(categorias)
-
     categorias_texto = " + ".join(sorted(categorias)) if categorias else "No detectadas"
-
     return zona, dia, noche, criterio, categorias_texto
 
 
@@ -1331,23 +1445,18 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
         )
 
     if regla_csv:
-        zona_ds38 = regla_csv.get("zona_ds38", zona_ds38)
-
-        limite_dia_csv = regla_csv.get("limite_dia", limite_dia)
-        limite_noche_csv = regla_csv.get("limite_noche", limite_noche)
-
-        if str(limite_dia_csv).strip().isdigit():
-            limite_dia = f"{limite_dia_csv} dBA"
+        if _es_regla_revision(regla_csv):
+            zona_ds38 = "Revisión requerida"
+            limite_dia = "—"
+            limite_noche = "—"
+            criterio = _texto_valido(regla_csv.get("fundamento", criterio)) or criterio
+            categorias = "Revisión normativa"
         else:
-            limite_dia = limite_dia_csv
-
-        if str(limite_noche_csv).strip().isdigit():
-            limite_noche = f"{limite_noche_csv} dBA"
-        else:
-            limite_noche = limite_noche_csv
-
-        criterio = regla_csv.get("fundamento", criterio)
-        categorias = regla_csv.get("categorias", categorias)
+            zona_ds38 = _texto_valido(regla_csv.get("zona_ds38", zona_ds38)) or zona_ds38
+            limite_dia = _formatear_limite(regla_csv.get("limite_dia", limite_dia))
+            limite_noche = _formatear_limite(regla_csv.get("limite_noche", limite_noche))
+            criterio = _texto_valido(regla_csv.get("fundamento", criterio)) or criterio
+            categorias = _texto_valido(regla_csv.get("categorias", categorias)) or categorias
 
     fuente = fila.get("fuente_normativa", "")
     metodo = fila.get("metodo_busqueda", "")
@@ -1425,43 +1534,61 @@ def mostrar_resultado(lat, lon, gdf_prc, gdf_prms_uso, gdf_prms_lu, tolerancia_m
 
     st.markdown("## 4. Clasificación D.S. N°38/2011 MMA")
 
-    col_zona, col_dia, col_noche = st.columns([2, 1, 1])
+    requiere_revision_manual = zona_ds38 == "Revisión requerida"
 
-    with col_zona:
+    if requiere_revision_manual:
+        st.warning(
+            "⚠️ Esta zona requiere revisión normativa antes de asignar una homologación al D.S. N°38/2011 MMA."
+        )
         st.markdown(
-            f"""
-            <div class="ds38-card">
-                <h1>{zona_ds38}</h1>
-                <p>Zona homologada preliminar</p>
+            """
+            <div style="background:#3b2d16;border:1px solid #8c6b24;border-radius:12px;padding:20px;margin:10px 0 15px 0;">
+                <h2 style="margin:0 0 8px 0;">Revisión normativa requerida</h2>
+                <p style="margin:0;">No se asignan automáticamente Zona I, II, III o IV ni límites máximos permisibles hasta revisar el instrumento específico.</p>
             </div>
             """,
             unsafe_allow_html=True
         )
+        st.markdown("### Criterio")
+        st.write(criterio)
+    else:
+        col_zona, col_dia, col_noche = st.columns([2, 1, 1])
 
-    with col_dia:
-        st.markdown(
-            f"""
-            <div class="limit-card">
-                <h2>{limite_dia}</h2>
-                <p>Límite diurno</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        with col_zona:
+            st.markdown(
+                f"""
+                <div class="ds38-card">
+                    <h1>{zona_ds38}</h1>
+                    <p>Zona homologada preliminar</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-    with col_noche:
-        st.markdown(
-            f"""
-            <div class="limit-card">
-                <h2>{limite_noche}</h2>
-                <p>Límite nocturno</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        with col_dia:
+            st.markdown(
+                f"""
+                <div class="limit-card">
+                    <h2>{limite_dia}</h2>
+                    <p>Límite diurno</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-    st.markdown("### Criterio de homologación")
-    st.write(criterio)
+        with col_noche:
+            st.markdown(
+                f"""
+                <div class="limit-card">
+                    <h2>{limite_noche}</h2>
+                    <p>Límite nocturno</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("### Criterio de homologación")
+        st.write(criterio)
 
     st.markdown(
         '<p class="maab-signature">HOMOLOGADOR · Usos de suelo / Límites Máximos Permisibles · Desarrollado por MAAB</p>',
@@ -1523,7 +1650,7 @@ if st.session_state.comuna_actual != comuna_clave:
 comuna_info = indice[st.session_state.comuna_actual]
 
 st.info(
-    "⚠️ IMPORTANTE: primero seleccione la comuna donde se ubica el receptor. "
+    "⚠️ IMPORTANTE: primero seleccione la comuna donde se ubica el proyecto o fuente emisora. "
     "Luego busque la dirección, pegue coordenadas de Google Maps o seleccione el punto en el mapa. "
     "La homologación usa prioritariamente el PRC de la comuna seleccionada; si la comuna no corresponde, el resultado puede ser incorrecto."
 )
@@ -1535,12 +1662,32 @@ st.success(f"Comuna activa: {comuna_info['nombre']}")
 # CARGA PRC
 # =========================================================
 
-if comuna_info["archivo"]:
-    gdf_prc = cargar_shp(comuna_info["archivo"])
-    gdf_prc = normalizar_columnas(gdf_prc)
-    gdf_prc["fuente_normativa"] = "PRC"
+# Puente Alto se carga exclusivamente desde el shapefile local actualizado.
+# No depende de ArcGIS ni de conexión externa durante el uso de la aplicación.
+if st.session_state.comuna_actual == normalizar("Puente Alto"):
+    gdf_prc = cargar_prc_puente_alto_local()
+
+    if gdf_prc.empty:
+        # Respaldo temporal: usa el shape incluido en IPTMetropolitana.zip si existe.
+        # Se informa claramente porque este respaldo puede corresponder a una versión anterior.
+        if comuna_info["archivo"]:
+            gdf_prc = cargar_shp(comuna_info["archivo"])
+            st.warning(
+                "No se encontró el shapefile local actualizado de Puente Alto en "
+                "data/PRC_Puente_Alto/. Se está usando temporalmente la capa incluida "
+                "en IPTMetropolitana.zip, que podría corresponder a una versión anterior."
+            )
+        else:
+            st.error(
+                "No se encontró el shapefile local de Puente Alto. Copie los archivos "
+                "IPT_13_PRC_Puente_Alto.shp/.shx/.dbf/.prj en data/PRC_Puente_Alto/."
+            )
 else:
-    gdf_prc = crear_gdf_vacio()
+    gdf_prc = cargar_shp(comuna_info["archivo"]) if comuna_info["archivo"] else crear_gdf_vacio()
+
+gdf_prc = normalizar_columnas(gdf_prc)
+if not gdf_prc.empty:
+    gdf_prc["fuente_normativa"] = "PRC"
 
 
 # =========================================================
