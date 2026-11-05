@@ -771,6 +771,14 @@ def cargar_shp(shp):
             if gdf.crs is None:
                 raise ValueError("La nueva cartografía de Pudahuel no tiene CRS.")
             gdf = gdf.to_crs(epsg=4326)
+            # Campos originales del FeatureServer municipal: Denominaci y Zonas_Proy.
+            # Conservar la denominación exacta para cotejarla con la tabla normativa.
+            if "Denominaci" in gdf.columns:
+                gdf["ZONA"] = gdf["Denominaci"].fillna("").astype(str).str.strip()
+                gdf["NOMBRE"] = gdf["ZONA"]
+            elif "Zonas_Proy" in gdf.columns:
+                gdf["ZONA"] = gdf["Zonas_Proy"].fillna("").astype(str).str.strip()
+                gdf["NOMBRE"] = gdf["ZONA"]
             gdf["COMUNA"] = "Pudahuel"
             gdf["archivo_origen"] = PUDAHUEL_GEOJSON_PATH
             gdf["fuente_normativa"] = "PRC"
