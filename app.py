@@ -279,6 +279,8 @@ TABLA_HOMOLOGACION_PATH = "rules/homologacion_prc.csv"
 TABLA_PRMS_PATH = "rules/homologacion_prms.csv"
 TABLA_PUENTE_ALTO_PATH = "rules/homologacion_puente_alto.csv"
 PUENTE_ALTO_SHP_PATH = "data/PRC_Puente_Alto/IPT_13_PRC_Puente_Alto.shp"
+# Archivo cartográfico unificado Pudahuel: reemplaza las capas antiguas cuando esté disponible.
+PUDAHUEL_GEOJSON_PATH = "data/PRC_Pudahuel.geojson"
 
 # =========================================================
 # UTILIDADES
@@ -700,6 +702,23 @@ def crear_indice_comunas():
             "archivo": "__LOCAL_PUENTE_ALTO__"
         }
 
+    # Sólo una comuna Pudahuel para las antiguas capas Pudahuel, Pudahuel R
+    # y Pudahuel San Francisco. Si se agrega el GeoJSON actualizado,
+    # se utiliza exclusivamente ese archivo.
+    tiene_pudahuel = os.path.isfile(PUDAHUEL_GEOJSON_PATH) or any(
+        "/PRC/" in ruta and
+        ruta.rsplit("/", 1)[-1].lower().startswith("ipt_13_prc_pudahuel")
+        for ruta in listar_shapefiles()
+    )
+    for clave_existente in list(indice):
+        if clave_existente == normalizar("Pudahuel") or clave_existente.startswith(normalizar("Pudahuel") + " "):
+            indice.pop(clave_existente, None)
+    if tiene_pudahuel:
+        indice[normalizar("Pudahuel")] = {
+            "nombre": "Pudahuel",
+            "archivo": "__PUDAHUEL_UNIFICADO__"
+        }
+
     return indice
 
 
@@ -744,6 +763,41 @@ def cargar_shp(shp):
         gdf["archivo_origen"] = PUENTE_ALTO_SHP_PATH
         gdf["fuente_normativa"] = "PRC"
         return gdf
+
+    if shp == "__PUDAHUEL_UNIFICADO__":
+        # Prioridad absoluta a la cartografía actualizada y verificada.
+        if os.path.isfile(PUDAHUEL_GEOJSON_PATH):
+            gdf = gpd.read_file(PUDAHUEL_GEOJSON_PATH)
+            if gdf.crs is None:
+                raise ValueError("La nueva cartografía de Pudahuel no tiene CRS.")
+            gdf = gdf.to_crs(epsg=4326)
+            gdf["COMUNA"] = "Pudahuel"
+            gdf["archivo_origen"] = PUDAHUEL_GEOJSON_PATH
+            gdf["fuente_normativa"] = "PRC"
+            return gdf
+
+        # Respaldo histórico TEMPORAL: unifica Pudahuel y Pudahuel R sin
+        # confundirlo con el PRC actualizado.
+        rutas = [
+            ruta for ruta in listar_shapefiles()
+            if "/PRC/" in ruta
+            and ruta.rsplit("/", 1)[-1].lower().startswith("ipt_13_prc_pudahuel")
+            and "patrimonio" not in ruta.lower()
+            and "zne" not in ruta.lower()
+        ]
+        capas = []
+        for ruta_antigua in rutas:
+            capa = gpd.read_file(f"zip://{ZIP_PATH}!{ruta_antigua}")
+            if capa.crs is None:
+                continue
+            capa = capa.to_crs(epsg=4326)
+            capa["COMUNA"] = "Pudahuel"
+            capa["archivo_origen"] = ruta_antigua
+            capa["fuente_normativa"] = "PRC"
+            capas.append(capa)
+        if not capas:
+            return crear_gdf_vacio()
+        return gpd.GeoDataFrame(pd.concat(capas, ignore_index=True), crs="EPSG:4326")
 
     ruta = f"zip://{ZIP_PATH}!{shp}"
     gdf = gpd.read_file(ruta)
@@ -1633,6 +1687,14 @@ st.info(
 )
 
 st.success(f"Comuna activa: {comuna_info['nombre']}")
+
+if normalizar(comuna_info["nombre"]) == normalizar("Pudahuel") and not os.path.isfile(PUDAHUEL_GEOJSON_PATH):
+    st.warning(
+        "Pudahuel y Pudahuel R aparecen ahora como una sola comuna. "
+        "IMPORTANTE: aún se utilizan las geometrías históricas combinadas; "
+        "la cartografía actualizada debe incorporarse como data/PRC_Pudahuel.geojson "
+        "antes de utilizar los resultados para fiscalización."
+    )
 
 
 # =========================================================
