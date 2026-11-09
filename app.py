@@ -979,147 +979,98 @@ def detectar_limite_urbano_prms(lat, lon, gdf_prms_lu):
 # HOMOLOGACIÓN DS38
 # =========================================================
 def detectar_categorias_oguc(fila):
-    texto = " ".join([
-        str(fila.get("UPERM", "")),
-        str(fila.get("UPREF", "")),
-        str(fila.get("UPROH", "")),
-        str(fila.get("SUELO", "")),
-        str(fila.get("NOMBRE", "")),
-        str(fila.get("ZONA", "")),
-        texto_atributos(fila)
-    ])
+    """
+    Identifica SOLO usos permitidos para la homologación preliminar.
+    Nunca analiza UPROH, atributos indiscriminados ni nombres de archivos:
+    un uso prohibido no puede convertir una zona en III/IV.
+    La tabla PRC verificada conserva prioridad sobre esta heurística.
+    """
+    def valor(campo):
+        dato = fila.get(campo, "")
+        if dato is None or pd.isna(dato):
+            return ""
+        texto = normalizar(dato)
+        return "" if texto in ("nan", "none", "null", "-") else texto
 
-    texto_norm = normalizar(texto)
+    def solo_permitidos(texto):
+        # Algunas capas tienen los usos permitidos y prohibidos en un mismo campo.
+        # Se descarta desde el encabezado de prohibición (si aparece).
+        return re.split(
+            r"\\b(?:usos?\\s+prohibidos?|actividades?\\s+prohibidas?|"
+            r"usos?\\s+no\\s+permitidos?|no\\s+se\\s+permite|"
+            r"se\\s+prohibe|prohibiciones?)\\b",
+            texto, maxsplit=1
+        )[0].strip()
+
+    texto = solo_permitidos(" ".join(
+        parte for parte in (valor("UPERM"), valor("UPREF")) if parte
+    ))
+
+    # Respaldo limitado para capas sin campos de usos: una descripción de
+    # ZONA/NOMBRE/SUELO no es una ordenanza y no justifica inferir categorías
+    # desde términos genéricos (p. ej. "industrial" en el nombre de un archivo).
+    if not texto:
+        respaldo = " ".join(
+            parte for parte in (valor("SUELO"), valor("NOMBRE")) if parte
+        )
+        respaldo = solo_permitidos(respaldo)
+        if re.search(r"\\b(?:zona habitacional mixta|habitacional mixto)\\b", respaldo):
+            return {"R", "Eq", "AP", "Inf"}  # Regla PRMS ya existente
+        if re.search(r"\\b(?:zona|area)\\s+(?:verde|de espacio publico)\\b", respaldo):
+            return {"AV"} if "verde" in respaldo else {"EP"}
+        if re.search(r"\\bzona\\s+industrial(?:\\s+exclusiva)?\\b", respaldo):
+            return {"AP"}
+        if re.search(r"\\bzona\\s+(?:residencial|habitacional)(?!\\s+mixta)\\b", respaldo):
+            return {"R"}
+        return set()
 
     categorias = set()
 
-    # Regla específica PRMS: Zona Habitacional Mixta
-    if (
-        "zona habitacional mixto" in texto_norm
-        or "zona habitacional mixta" in texto_norm
-        or "habitacional mixto" in texto_norm
-        or "habitacional mixta" in texto_norm
-    ):
-        return {"R", "Eq", "AP", "Inf"}
+    def contiene(patron):
+        return bool(re.search(patron, texto))
 
-    # Residencial
-    if (
-        "residencial" in texto_norm
-        or "vivienda" in texto_norm
-        or "habitacional" in texto_norm
-        or "habitacionales" in texto_norm
-    ):
+    if contiene(r"\\b(?:residencial(?:es)?|viviendas?|habitacional(?:es)?)\\b"):
         categorias.add("R")
 
-    # Equipamiento
-    if (
-        "equipamiento" in texto_norm
-        or "comercio" in texto_norm
-        or "educacion" in texto_norm
-        or "salud" in texto_norm
-        or "culto" in texto_norm
-        or "cultura" in texto_norm
-        or "deporte" in texto_norm
-        or "seguridad" in texto_norm
-        or "esparcimiento" in texto_norm
-        or "cientifico" in texto_norm
-        or "metropolitano" in texto_norm
-        or "intercomunal" in texto_norm
+    if contiene(
+        r"\\b(?:equipamientos?|comercios?|oficinas?|educacion|salud|culto|"
+        r"cultura|deportes?|seguridad|esparcimiento|cientifico)\\b"
     ):
         categorias.add("Eq")
 
-    # =====================================================
-    # ACTIVIDADES PRODUCTIVAS
-    # CRITERIO SMA 491/2016
-    # Las actividades productivas INOFENSIVAS
-    # se homologan como Equipamiento.
-    # =====================================================
-
-    actividad_productiva_detectada = (
-        "actividad productiva" in texto_norm
-        or "actividades productivas" in texto_norm
-        or "productiva" in texto_norm
-        or "productivas" in texto_norm
-        or "industrial" in texto_norm
-        or "industria" in texto_norm
-        or "taller" in texto_norm
-        or "talleres" in texto_norm
-        or "bodega" in texto_norm
-        or "bodegas" in texto_norm
-        or "almacenamiento" in texto_norm
-        or "servicio de caracter industrial" in texto_norm
-        or "servicios de caracter industrial" in texto_norm
-        or "zona industrial" in texto_norm
-        or "industrial exclusiva" in texto_norm
+    # Actividades productivas exclusivamente inofensivas => Eq.
+    # Si también se permiten molestas/peligrosas => AP.
+    productiva = contiene(
+        r"\\b(?:actividades? productivas?|productivas?|industr(?:ia|ias|ial|iales)|"
+        r"taller(?:es)?|bodegas?|almacenamiento|servicios? de caracter industrial)\\b"
     )
-
-    actividad_productiva_inofensiva = (
-        "actividad productiva inofensiva" in texto_norm
-        or "actividades productivas inofensivas" in texto_norm
-        or "industria inofensiva" in texto_norm
-        or "industrial inofensiva" in texto_norm
-        or "industrial inofensivo" in texto_norm
-        or "taller inofensivo" in texto_norm
-        or "talleres inofensivos" in texto_norm
-        or "almacenamiento inofensivo" in texto_norm
-        or "bodega inofensiva" in texto_norm
-        or "bodegas inofensivas" in texto_norm
+    inofensiva = contiene(r"\\binofensiv[oa]s?\\b")
+    no_inofensiva = contiene(
+        r"\\b(?:molest[oa]s?|peligros[oa]s?|insalubr[es]+|"
+        r"contaminantes?)\\b"
     )
-
-    actividad_productiva_no_inofensiva = (
-        "molesta" in texto_norm
-        or "molestas" in texto_norm
-        or "insalubre" in texto_norm
-        or "insalubres" in texto_norm
-        or "contaminante" in texto_norm
-        or "contaminantes" in texto_norm
-        or "peligrosa" in texto_norm
-        or "peligrosas" in texto_norm
-        or "industrial exclusiva" in texto_norm
-        or "industria exclusiva" in texto_norm
-    )
-
-    if actividad_productiva_detectada:
-
-        if actividad_productiva_inofensiva and not actividad_productiva_no_inofensiva:
+    if productiva:
+        if inofensiva and not no_inofensiva:
             categorias.add("Eq")
         else:
             categorias.add("AP")
 
-    # Infraestructura
-    if (
-        "infraestructura" in texto_norm
-        or "transporte" in texto_norm
-        or "sanitaria" in texto_norm
-        or "energetica" in texto_norm
-        or "telecomunicacion" in texto_norm
-        or "telecomunicaciones" in texto_norm
-        or "red vial" in texto_norm
-        or "terminal" in texto_norm
-        or "estacion" in texto_norm
-        or "subestacion" in texto_norm
-        or "planta" in texto_norm
-        or "macroinfraestructura" in texto_norm
+    # Se reconoce infraestructura cuando se identifica como uso permitido.
+    # Vialidad, redes/trazados, 'estación' o 'planta' genéricas NO bastan.
+    if contiene(
+        r"\\b(?:infraestructuras?|macroinfraestructura|"
+        r"infraestructura (?:de )?(?:transporte|sanitaria|energetica|"
+        r"telecomunicaciones)|terminal(?:es)? (?:de )?(?:buses|transporte)|"
+        r"subestaciones? electricas?)\\b"
     ):
         categorias.add("Inf")
 
-    # Área Verde
-    if (
-        "area verde" in texto_norm
-        or "areas verdes" in texto_norm
-        or "parque" in texto_norm
-        or "plaza" in texto_norm
-        or "recreacion" in texto_norm
-    ):
+    if contiene(r"\\b(?:areas? verdes?|parques?|plazas?)\\b"):
         categorias.add("AV")
 
-    # Espacio Público
-    if (
-        "espacio publico" in texto_norm
-        or "espacios publicos" in texto_norm
-        or "uso publico" in texto_norm
-        or "vialidad" in texto_norm
-        or "bien nacional de uso publico" in texto_norm
+    if contiene(
+        r"\\b(?:espacios? publicos?|bien(?:es)? nacional(?:es)? "
+        r"de uso publico|vialidad)\\b"
     ):
         categorias.add("EP")
 
