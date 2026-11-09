@@ -996,9 +996,9 @@ def detectar_categorias_oguc(fila):
         # Algunas capas tienen los usos permitidos y prohibidos en un mismo campo.
         # Se descarta desde el encabezado de prohibición (si aparece).
         return re.split(
-            r"\\b(?:usos?\\s+prohibidos?|actividades?\\s+prohibidas?|"
-            r"usos?\\s+no\\s+permitidos?|no\\s+se\\s+permite|"
-            r"se\\s+prohibe|prohibiciones?)\\b",
+            r"\b(?:usos?\s+prohibidos?|actividades?\s+prohibidas?|"
+            r"usos?\s+no\s+permitidos?|no\s+se\s+permite|"
+            r"se\s+prohibe|prohibiciones?)\b",
             texto, maxsplit=1
         )[0].strip()
 
@@ -1014,13 +1014,13 @@ def detectar_categorias_oguc(fila):
             parte for parte in (valor("SUELO"), valor("NOMBRE")) if parte
         )
         respaldo = solo_permitidos(respaldo)
-        if re.search(r"\\b(?:zona habitacional mixta|habitacional mixto)\\b", respaldo):
+        if re.search(r"\b(?:zona habitacional mixta|habitacional mixto)\b", respaldo):
             return {"R", "Eq", "AP", "Inf"}  # Regla PRMS ya existente
-        if re.search(r"\\b(?:zona|area)\\s+(?:verde|de espacio publico)\\b", respaldo):
+        if re.search(r"\b(?:zona|area)\s+(?:verde|de espacio publico)\b", respaldo):
             return {"AV"} if "verde" in respaldo else {"EP"}
-        if re.search(r"\\bzona\\s+industrial(?:\\s+exclusiva)?\\b", respaldo):
+        if re.search(r"\bzona\s+industrial(?:\s+exclusiva)?\b", respaldo):
             return {"AP"}
-        if re.search(r"\\bzona\\s+(?:residencial|habitacional)(?!\\s+mixta)\\b", respaldo):
+        if re.search(r"\bzona\s+(?:residencial|habitacional)(?!\s+mixta)\b", respaldo):
             return {"R"}
         return set()
 
@@ -1029,25 +1029,25 @@ def detectar_categorias_oguc(fila):
     def contiene(patron):
         return bool(re.search(patron, texto))
 
-    if contiene(r"\\b(?:residencial(?:es)?|viviendas?|habitacional(?:es)?)\\b"):
+    if contiene(r"\b(?:residencial(?:es)?|viviendas?|habitacional(?:es)?)\b"):
         categorias.add("R")
 
     if contiene(
-        r"\\b(?:equipamientos?|comercios?|oficinas?|educacion|salud|culto|"
-        r"cultura|deportes?|seguridad|esparcimiento|cientifico)\\b"
+        r"\b(?:equipamientos?|comercios?|oficinas?|educacion|salud|culto|"
+        r"cultura|deportes?|seguridad|esparcimiento|cientifico)\b"
     ):
         categorias.add("Eq")
 
     # Actividades productivas exclusivamente inofensivas => Eq.
     # Si también se permiten molestas/peligrosas => AP.
     productiva = contiene(
-        r"\\b(?:actividades? productivas?|productivas?|industr(?:ia|ias|ial|iales)|"
-        r"taller(?:es)?|bodegas?|almacenamiento|servicios? de caracter industrial)\\b"
+        r"\b(?:actividades? productivas?|productivas?|industr(?:ia|ias|ial|iales)|"
+        r"taller(?:es)?|bodegas?|almacenamiento|servicios? de caracter industrial)\b"
     )
-    inofensiva = contiene(r"\\binofensiv[oa]s?\\b")
+    inofensiva = contiene(r"\binofensiv[oa]s?\b")
     no_inofensiva = contiene(
-        r"\\b(?:molest[oa]s?|peligros[oa]s?|insalubr[es]+|"
-        r"contaminantes?)\\b"
+        r"\b(?:molest[oa]s?|peligros[oa]s?|insalubr[es]+|"
+        r"contaminantes?)\b"
     )
     if productiva:
         if inofensiva and not no_inofensiva:
@@ -1058,19 +1058,19 @@ def detectar_categorias_oguc(fila):
     # Se reconoce infraestructura cuando se identifica como uso permitido.
     # Vialidad, redes/trazados, 'estación' o 'planta' genéricas NO bastan.
     if contiene(
-        r"\\b(?:infraestructuras?|macroinfraestructura|"
+        r"\b(?:infraestructuras?|macroinfraestructura|"
         r"infraestructura (?:de )?(?:transporte|sanitaria|energetica|"
         r"telecomunicaciones)|terminal(?:es)? (?:de )?(?:buses|transporte)|"
-        r"subestaciones? electricas?)\\b"
+        r"subestaciones? electricas?)\b"
     ):
         categorias.add("Inf")
 
-    if contiene(r"\\b(?:areas? verdes?|parques?|plazas?)\\b"):
+    if contiene(r"\b(?:areas? verdes?|parques?|plazas?)\b"):
         categorias.add("AV")
 
     if contiene(
-        r"\\b(?:espacios? publicos?|bien(?:es)? nacional(?:es)? "
-        r"de uso publico|vialidad)\\b"
+        r"\b(?:espacios? publicos?|bien(?:es)? nacional(?:es)? "
+        r"de uso publico|vialidad)\b"
     ):
         categorias.add("EP")
 
