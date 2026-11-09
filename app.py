@@ -1002,6 +1002,12 @@ def detectar_categorias_oguc(fila):
             texto, maxsplit=1
         )[0].strip()
 
+    # La zona Habitacional Mixta del PRMS conserva la regla especial existente.
+    descripcion = " ".join((valor("SUELO"), valor("NOMBRE")))
+    if (valor("fuente_normativa") == "prms uso suelo" and
+            re.search(r"\bhabitacional mixt[oa]\b", descripcion)):
+        return {"R", "Eq", "AP", "Inf"}
+
     texto = solo_permitidos(" ".join(
         parte for parte in (valor("UPERM"), valor("UPREF")) if parte
     ))
